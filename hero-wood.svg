@@ -1,0 +1,231 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <!-- Wood grain base filter -->
+    <filter id="woodgrain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.015 0.6" numOctaves="4" seed="8" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
+      <feComponentTransfer in="gray" result="contrast">
+        <feFuncR type="gamma" amplitude="1.4" exponent="0.6" offset="-0.1"/>
+        <feFuncG type="gamma" amplitude="1.2" exponent="0.7" offset="-0.05"/>
+        <feFuncB type="gamma" amplitude="0.9" exponent="0.8" offset="-0.1"/>
+      </feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="contrast" mode="multiply" result="blend"/>
+    </filter>
+
+    <!-- Soft vignette radial -->
+    <radialGradient id="vignette" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="100%" stop-color="#0d0804" stop-opacity="0.75"/>
+    </radialGradient>
+
+    <!-- Overlay gradient top-to-bottom for text legibility -->
+    <linearGradient id="overlay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a0f06" stop-opacity="0.3"/>
+      <stop offset="60%" stop-color="#1a0f06" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#0d0804" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <!-- Glow for lantern light effect -->
+    <radialGradient id="glow" cx="72%" cy="38%" r="30%">
+      <stop offset="0%" stop-color="#c8a030" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+
+    <!-- Wood ring pattern clip -->
+    <clipPath id="woodclip">
+      <rect width="800" height="500"/>
+    </clipPath>
+  </defs>
+
+  <!-- === BASE WOOD PLANK COLORS === -->
+  <!-- Plank 1 -->
+  <rect x="0" y="0" width="113" height="500" fill="#6b3c18"/>
+  <!-- Plank 2 -->
+  <rect x="113" y="0" width="108" height="500" fill="#7a4520"/>
+  <!-- Plank 3 -->
+  <rect x="221" y="0" width="116" height="500" fill="#5e3314"/>
+  <!-- Plank 4 -->
+  <rect x="337" y="0" width="110" height="500" fill="#70401c"/>
+  <!-- Plank 5 -->
+  <rect x="447" y="0" width="118" height="500" fill="#7c4822"/>
+  <!-- Plank 6 -->
+  <rect x="565" y="0" width="109" height="500" fill="#623718"/>
+  <!-- Plank 7 -->
+  <rect x="674" y="0" width="126" height="500" fill="#6e3e1e"/>
+
+  <!-- Plank dividers -->
+  <line x1="113" y1="0" x2="113" y2="500" stroke="#2a1206" stroke-width="2.5"/>
+  <line x1="221" y1="0" x2="221" y2="500" stroke="#1e0e04" stroke-width="3"/>
+  <line x1="337" y1="0" x2="337" y2="500" stroke="#2a1206" stroke-width="2"/>
+  <line x1="447" y1="0" x2="447" y2="500" stroke="#1e0e04" stroke-width="3.5"/>
+  <line x1="565" y1="0" x2="565" y2="500" stroke="#2a1206" stroke-width="2.5"/>
+  <line x1="674" y1="0" x2="674" y2="500" stroke="#1e0e04" stroke-width="2"/>
+
+  <!-- === WOOD GRAIN LINES (horizontal flowing) === -->
+  <g opacity="0.25" stroke="#200e04" stroke-width="1" fill="none">
+    <!-- Natural grain curves per plank -->
+    <path d="M0,42 Q56,38 113,44"/>
+    <path d="M0,86 Q55,80 113,90"/>
+    <path d="M0,130 Q58,124 113,132"/>
+    <path d="M0,174 Q54,170 113,177"/>
+    <path d="M0,218 Q57,213 113,220"/>
+    <path d="M0,264 Q56,258 113,266"/>
+    <path d="M0,310 Q55,304 113,312"/>
+    <path d="M0,356 Q57,350 113,359"/>
+    <path d="M0,402 Q54,396 113,404"/>
+    <path d="M0,450 Q56,444 113,452"/>
+
+    <path d="M113,36 Q167,30 221,38"/>
+    <path d="M113,82 Q165,76 221,84"/>
+    <path d="M113,128 Q168,122 221,130"/>
+    <path d="M113,176 Q166,170 221,178"/>
+    <path d="M113,224 Q167,217 221,225"/>
+    <path d="M113,272 Q165,266 221,274"/>
+    <path d="M113,320 Q168,314 221,322"/>
+    <path d="M113,368 Q166,361 221,370"/>
+    <path d="M113,416 Q167,410 221,418"/>
+    <path d="M113,462 Q165,456 221,464"/>
+
+    <path d="M221,40 Q279,34 337,42"/>
+    <path d="M221,90 Q280,83 337,92"/>
+    <path d="M221,138 Q278,132 337,140"/>
+    <path d="M221,186 Q281,179 337,188"/>
+    <path d="M221,234 Q279,227 337,236"/>
+    <path d="M221,282 Q280,275 337,284"/>
+    <path d="M221,330 Q278,323 337,332"/>
+    <path d="M221,378 Q281,371 337,380"/>
+    <path d="M221,428 Q279,421 337,430"/>
+    <path d="M221,476 Q280,469 337,478"/>
+
+    <path d="M337,38 Q392,32 447,40"/>
+    <path d="M337,84 Q391,77 447,86"/>
+    <path d="M337,132 Q393,125 447,134"/>
+    <path d="M337,180 Q392,173 447,182"/>
+    <path d="M337,228 Q391,221 447,230"/>
+    <path d="M337,276 Q393,269 447,278"/>
+    <path d="M337,324 Q392,317 447,326"/>
+    <path d="M337,372 Q391,365 447,374"/>
+    <path d="M337,422 Q393,415 447,424"/>
+    <path d="M337,470 Q392,463 447,472"/>
+
+    <path d="M447,42 Q506,35 565,44"/>
+    <path d="M447,88 Q505,81 565,90"/>
+    <path d="M447,136 Q507,129 565,138"/>
+    <path d="M447,184 Q506,177 565,186"/>
+    <path d="M447,232 Q505,225 565,234"/>
+    <path d="M447,280 Q507,273 565,282"/>
+    <path d="M447,328 Q506,321 565,330"/>
+    <path d="M447,376 Q505,369 565,378"/>
+    <path d="M447,426 Q507,419 565,428"/>
+    <path d="M447,474 Q506,467 565,476"/>
+
+    <path d="M565,36 Q619,30 674,38"/>
+    <path d="M565,82 Q618,76 674,84"/>
+    <path d="M565,130 Q620,123 674,132"/>
+    <path d="M565,178 Q619,171 674,180"/>
+    <path d="M565,226 Q618,219 674,228"/>
+    <path d="M565,274 Q620,267 674,276"/>
+    <path d="M565,322 Q619,315 674,324"/>
+    <path d="M565,370 Q618,363 674,372"/>
+    <path d="M565,420 Q620,413 674,422"/>
+    <path d="M565,468 Q619,461 674,470"/>
+
+    <path d="M674,40 Q737,34 800,42"/>
+    <path d="M674,86 Q736,80 800,88"/>
+    <path d="M674,134 Q738,127 800,136"/>
+    <path d="M674,182 Q737,175 800,184"/>
+    <path d="M674,230 Q736,223 800,232"/>
+    <path d="M674,278 Q738,271 800,280"/>
+    <path d="M674,326 Q737,319 800,328"/>
+    <path d="M674,374 Q736,367 800,376"/>
+    <path d="M674,424 Q738,417 800,426"/>
+    <path d="M674,472 Q737,465 800,474"/>
+  </g>
+
+  <!-- Lighter grain highlight lines -->
+  <g opacity="0.12" stroke="#e8a040" stroke-width="0.7" fill="none">
+    <path d="M0,60 Q56,54 113,62"/>
+    <path d="M0,148 Q55,142 113,150"/>
+    <path d="M0,240 Q57,233 113,242"/>
+    <path d="M0,334 Q54,328 113,336"/>
+    <path d="M0,430 Q56,424 113,432"/>
+    <path d="M113,58 Q167,52 221,60"/>
+    <path d="M221,56 Q279,50 337,58"/>
+    <path d="M337,60 Q392,54 447,62"/>
+    <path d="M447,56 Q506,50 565,58"/>
+    <path d="M565,54 Q619,48 674,56"/>
+    <path d="M674,58 Q737,52 800,60"/>
+    <path d="M113,152 Q165,146 221,154"/>
+    <path d="M221,148 Q280,141 337,150"/>
+    <path d="M337,154 Q391,147 447,156"/>
+    <path d="M447,150 Q507,143 565,152"/>
+    <path d="M565,146 Q618,139 674,148"/>
+    <path d="M674,152 Q737,145 800,154"/>
+  </g>
+
+  <!-- === WOOD KNOT — plank 2 === -->
+  <g transform="translate(165, 200)" opacity="0.6">
+    <ellipse cx="0" cy="0" rx="22" ry="18" fill="#3a1e0a" stroke="#1e0e04" stroke-width="1.5"/>
+    <ellipse cx="0" cy="0" rx="14" ry="11" fill="#2a1206" stroke="#150804" stroke-width="1"/>
+    <ellipse cx="0" cy="0" rx="7" ry="5" fill="#1a0a04"/>
+    <path d="M-22,0 Q-35,-8 -50,-4" fill="none" stroke="#3a1e0a" stroke-width="1.5" opacity="0.7"/>
+    <path d="M22,0 Q35,6 52,2" fill="none" stroke="#3a1e0a" stroke-width="1.5" opacity="0.7"/>
+    <path d="M-20,-6 Q-32,-16 -48,-14" fill="none" stroke="#3a1e0a" stroke-width="1" opacity="0.5"/>
+    <path d="M20,6 Q32,14 50,12" fill="none" stroke="#3a1e0a" stroke-width="1" opacity="0.5"/>
+  </g>
+
+  <!-- === WOOD KNOT — plank 5 === -->
+  <g transform="translate(510, 340)" opacity="0.55">
+    <ellipse cx="0" cy="0" rx="18" ry="15" fill="#3a1e0a" stroke="#1e0e04" stroke-width="1.5"/>
+    <ellipse cx="0" cy="0" rx="11" ry="9" fill="#2a1206" stroke="#150804" stroke-width="1"/>
+    <ellipse cx="0" cy="0" rx="5" ry="4" fill="#1a0a04"/>
+    <path d="M-18,0 Q-30,-6 -45,-3" fill="none" stroke="#3a1e0a" stroke-width="1.2" opacity="0.6"/>
+    <path d="M18,0 Q30,5 46,2" fill="none" stroke="#3a1e0a" stroke-width="1.2" opacity="0.6"/>
+  </g>
+
+  <!-- === SMALL KNOT — plank 6 === -->
+  <g transform="translate(618, 130)" opacity="0.45">
+    <ellipse cx="0" cy="0" rx="12" ry="10" fill="#3a1e0a" stroke="#1e0e04" stroke-width="1.2"/>
+    <ellipse cx="0" cy="0" rx="7" ry="6" fill="#2a1206"/>
+    <ellipse cx="0" cy="0" rx="3" ry="2.5" fill="#1a0a04"/>
+    <path d="M-12,0 Q-22,-4 -34,-2" fill="none" stroke="#3a1e0a" stroke-width="1" opacity="0.5"/>
+    <path d="M12,0 Q22,4 35,2" fill="none" stroke="#3a1e0a" stroke-width="1" opacity="0.5"/>
+  </g>
+
+  <!-- === STAINED GLASS LANTERN (right side decoration) === -->
+  <g transform="translate(620, 80)" opacity="0.18">
+    <!-- lantern body outline -->
+    <rect x="-30" y="40" width="60" height="90" rx="4" fill="none" stroke="#c8a96e" stroke-width="2"/>
+    <polygon points="0,-5 -40,40 40,40" fill="none" stroke="#c8a96e" stroke-width="2"/>
+    <path d="M-12,-5 Q0,-18 12,-5" fill="none" stroke="#c8a96e" stroke-width="2"/>
+    <rect x="-34" y="128" width="68" height="7" rx="2" fill="none" stroke="#c8a96e" stroke-width="1.5"/>
+    <!-- panes -->
+    <line x1="0" y1="40" x2="0" y2="130" stroke="#c8a96e" stroke-width="1.2"/>
+    <line x1="-30" y1="85" x2="30" y2="85" stroke="#c8a96e" stroke-width="1.2"/>
+    <rect x="-29" y="41" width="28" height="43" fill="#1a6b4a" opacity="0.4"/>
+    <rect x="1" y="41" width="28" height="43" fill="#7b2d8b" opacity="0.4"/>
+    <rect x="-29" y="86" width="28" height="43" fill="#b5420a" opacity="0.4"/>
+    <rect x="1" y="86" width="28" height="43" fill="#1a4a8a" opacity="0.4"/>
+  </g>
+
+  <!-- === WARM GLOW (candle/lantern effect) === -->
+  <rect x="0" y="0" width="800" height="500" fill="url(#glow)"/>
+
+  <!-- === DARK OVERLAY for text legibility === -->
+  <rect x="0" y="0" width="800" height="500" fill="url(#overlay)"/>
+
+  <!-- === VIGNETTE === -->
+  <rect x="0" y="0" width="800" height="500" fill="url(#vignette)"/>
+
+  <!-- === SUBTLE DUST PARTICLES === -->
+  <g opacity="0.3" fill="#c8a040">
+    <circle cx="120" cy="80" r="1.2"/>
+    <circle cx="340" cy="55" r="0.8"/>
+    <circle cx="580" cy="90" r="1.4"/>
+    <circle cx="720" cy="40" r="0.9"/>
+    <circle cx="200" cy="420" r="1.1"/>
+    <circle cx="460" cy="440" r="0.7"/>
+    <circle cx="650" cy="410" r="1.3"/>
+    <circle cx="80" cy="350" r="0.9"/>
+  </g>
+</svg>

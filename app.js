@@ -12,34 +12,66 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ===== BEFORE & AFTER SLIDERS =====
 document.querySelectorAll('.ba-slider').forEach(slider => {
-  const after  = slider.querySelector('.ba-after');
-  const handle = slider.querySelector('.ba-handle');
+  const after      = slider.querySelector('.ba-after');
+  const beforeDiv  = slider.querySelector('.ba-before');
+  const handle     = slider.querySelector('.ba-handle');
   let dragging = false;
+  let startX   = 0;
+  let moved    = false;
+
+  function sliderPct() {
+    return parseFloat(after.style.width) || 50;
+  }
 
   function setPosition(clientX) {
     const rect = slider.getBoundingClientRect();
     let pct = (clientX - rect.left) / rect.width;
     pct = Math.min(Math.max(pct, 0.02), 0.98);
     const p = (pct * 100).toFixed(1) + '%';
-    after.style.width  = p;
-    handle.style.left  = p;
+    after.style.width = p;
+    handle.style.left = p;
+  }
+
+  function tryOpenLightbox(clientX) {
+    const rect   = slider.getBoundingClientRect();
+    const clickPct = ((clientX - rect.left) / rect.width) * 100;
+    const side   = clickPct > sliderPct() ? after : beforeDiv;
+    const img    = side.querySelector('.ba-img');
+    if (img && img.src) openLightbox(img.src, false);
   }
 
   // Mouse
-  slider.addEventListener('mousedown', e => { dragging = true; setPosition(e.clientX); });
-  window.addEventListener('mousemove', e => { if (dragging) setPosition(e.clientX); });
-  window.addEventListener('mouseup',   () => { dragging = false; });
+  slider.addEventListener('mousedown', e => {
+    dragging = true; moved = false; startX = e.clientX;
+    setPosition(e.clientX);
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    if (Math.abs(e.clientX - startX) > 6) moved = true;
+    setPosition(e.clientX);
+  });
+  window.addEventListener('mouseup', e => {
+    if (dragging && !moved) tryOpenLightbox(e.clientX);
+    dragging = false; moved = false;
+  });
 
-  // Touch — horizontal only, won't block vertical scroll
+  // Touch
+  let touchStartX = 0;
+  let touchMoved  = false;
   slider.addEventListener('touchstart', e => {
-    dragging = true;
+    dragging = true; touchMoved = false;
+    touchStartX = e.touches[0].clientX;
     setPosition(e.touches[0].clientX);
   }, { passive: true });
   window.addEventListener('touchmove', e => {
     if (!dragging) return;
+    if (Math.abs(e.touches[0].clientX - touchStartX) > 10) touchMoved = true;
     setPosition(e.touches[0].clientX);
   }, { passive: true });
-  window.addEventListener('touchend', () => { dragging = false; });
+  window.addEventListener('touchend', e => {
+    if (dragging && !touchMoved) tryOpenLightbox(e.changedTouches[0].clientX);
+    dragging = false; touchMoved = false;
+  });
 });
 
 // ===== LIGHTBOX =====

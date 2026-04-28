@@ -73,16 +73,26 @@ a { text-decoration: none; color: inherit; }
 
 /* ===== HERO ===== */
 .hero {
-  background: url('hero-wood.svg') center/cover no-repeat;
+  background: url('banner.png') center/cover no-repeat;
   background-color: var(--wood-dark);
   text-align: center;
   padding: 52px 24px 44px;
   position: relative;
 }
 
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 10, 2, 0.62);
+  pointer-events: none;
+}
+
+.hero > * { position: relative; }
+
 .hero--services {
-  background: url('hero-tools.svg') center/cover no-repeat;
-  background-color: #0e1408;
+  background: url('banner.png') center/cover no-repeat;
+  background-color: var(--wood-dark);
 }
 
 .hero-badge {

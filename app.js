@@ -10,6 +10,38 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
+// ===== BEFORE & AFTER SLIDERS =====
+document.querySelectorAll('.ba-slider').forEach(slider => {
+  const after  = slider.querySelector('.ba-after');
+  const handle = slider.querySelector('.ba-handle');
+  let dragging = false;
+
+  function setPosition(clientX) {
+    const rect = slider.getBoundingClientRect();
+    let pct = (clientX - rect.left) / rect.width;
+    pct = Math.min(Math.max(pct, 0.02), 0.98);
+    const p = (pct * 100).toFixed(1) + '%';
+    after.style.width  = p;
+    handle.style.left  = p;
+  }
+
+  // Mouse
+  slider.addEventListener('mousedown', e => { dragging = true; setPosition(e.clientX); });
+  window.addEventListener('mousemove', e => { if (dragging) setPosition(e.clientX); });
+  window.addEventListener('mouseup',   () => { dragging = false; });
+
+  // Touch — horizontal only, won't block vertical scroll
+  slider.addEventListener('touchstart', e => {
+    dragging = true;
+    setPosition(e.touches[0].clientX);
+  }, { passive: true });
+  window.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    setPosition(e.touches[0].clientX);
+  }, { passive: true });
+  window.addEventListener('touchend', () => { dragging = false; });
+});
+
 // ===== LIGHTBOX =====
 const lightbox = document.getElementById('lightbox');
 const lbImg    = document.getElementById('lb-img');

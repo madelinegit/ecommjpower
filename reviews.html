@@ -14,41 +14,33 @@
       padding: 48px 24px 40px;
       position: relative;
     }
-    .page-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(20,10,2,0.62);
-      pointer-events: none;
-    }
-    .page-hero > * { position: relative; }
+    .page-hero::before { content:''; position:absolute; inset:0; background:rgba(20,10,2,0.62); pointer-events:none; }
+    .page-hero > * { position:relative; }
     .page-hero .hero-badge { display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:50%; background:rgba(200,169,110,0.1); border:1.5px solid #c8a96e; margin-bottom:16px; }
-    .page-hero .hero-logo { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-    .page-hero h1 { font-size:clamp(1.6rem,5vw,2.4rem); color:#e8d5b0; font-weight:700; margin-bottom:8px; }
+    .page-hero .hero-logo  { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .page-hero h1  { font-size:clamp(1.6rem,5vw,2.4rem); color:#e8d5b0; font-weight:700; margin-bottom:8px; }
     .page-hero h1 span { color:#f0c060; }
-    .page-hero p { color:#b8a090; font-size:0.95rem; }
+    .page-hero p   { color:#b8a090; font-size:0.95rem; }
     .back-link { display:inline-block; margin-top:14px; color:#c8a96e; font-size:0.85rem; text-decoration:none; border:1px solid rgba(200,169,110,0.4); padding:6px 14px; border-radius:20px; }
     .back-link:hover { background:rgba(200,169,110,0.1); }
 
-    /* Reviews list */
-    .reviews-section { max-width:860px; margin:0 auto; padding:40px 20px; }
-    .reviews-section h2 { font-size:1.4rem; color:#e8d5b0; text-align:center; margin-bottom:28px; }
-    .reviews-grid { display:flex; flex-direction:column; gap:20px; }
-    .review-card { background:#221a0e; border:1px solid #3a2a14; border-radius:10px; padding:22px; }
+    .reviews-section { max-width:860px; margin:0 auto; padding:40px 20px 20px; }
+    .reviews-grid    { display:flex; flex-direction:column; gap:20px; }
+    .review-card     { background:#221a0e; border:1px solid #3a2a14; border-radius:10px; padding:22px; }
     .review-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
-    .review-name { color:#f0c060; font-weight:700; font-size:1rem; }
-    .review-date { color:#7a6040; font-size:0.78rem; }
-    .review-text { color:#c8baa0; font-size:0.95rem; line-height:1.65; white-space:pre-wrap; }
-    .review-img { margin-top:14px; width:100%; max-height:340px; object-fit:cover; border-radius:7px; border:1px solid #3a2a14; cursor:pointer; }
-    .no-reviews { text-align:center; color:#7a6040; padding:40px 0; font-size:0.95rem; }
+    .review-name  { color:#f0c060; font-weight:700; font-size:1rem; }
+    .review-date  { color:#7a6040; font-size:0.78rem; }
+    .review-text  { color:#c8baa0; font-size:0.95rem; line-height:1.65; }
+    .review-img   { margin-top:14px; width:100%; max-height:340px; object-fit:cover; border-radius:7px; border:1px solid #3a2a14; cursor:pointer; }
+    .no-reviews   { text-align:center; color:#7a6040; padding:40px 0; font-size:0.95rem; }
 
-    /* Lightbox for review images */
     .r-lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:9999; align-items:center; justify-content:center; }
     .r-lightbox.open { display:flex; }
-    .r-lightbox img { max-width:92vw; max-height:88vh; border-radius:8px; object-fit:contain; }
+    .r-lightbox img  { max-width:92vw; max-height:88vh; border-radius:8px; object-fit:contain; }
     .r-lightbox-close { position:absolute; top:18px; right:22px; color:#e8d5b0; font-size:2rem; cursor:pointer; background:none; border:none; line-height:1; }
 
-    /* Submission form */
+    .divider { width:60px; height:2px; background:#c8a96e; margin:10px auto 40px; opacity:0.4; }
+
     .submit-section { max-width:640px; margin:0 auto 60px; padding:0 20px; }
     .submit-section h2 { font-size:1.3rem; color:#e8d5b0; text-align:center; margin-bottom:24px; }
     .submit-form { background:#221a0e; border:1px solid #3a2a14; border-radius:10px; padding:28px; display:flex; flex-direction:column; gap:14px; }
@@ -60,12 +52,10 @@
     .submit-form textarea { min-height:120px; resize:vertical; }
     .submit-form input[type="file"] { color:#b8a090; font-size:0.85rem; }
     .submit-btn { background:#c8a96e; color:#1a1208; border:none; padding:12px; border-radius:6px; font-size:1rem; font-weight:700; cursor:pointer; transition:background 0.2s; }
-    .submit-btn:hover { background:#f0c060; }
+    .submit-btn:hover    { background:#f0c060; }
     .submit-btn:disabled { opacity:0.5; cursor:default; }
     .success-msg { display:none; text-align:center; color:#7dbf7d; background:rgba(125,191,125,0.08); border:1px solid rgba(125,191,125,0.3); border-radius:8px; padding:16px; font-size:0.95rem; }
-    .error-msg { display:none; text-align:center; color:#e07070; font-size:0.88rem; margin-top:8px; }
-
-    .divider { width:60px; height:2px; background:#c8a96e; margin:0 auto 40px; opacity:0.4; }
+    .error-msg   { display:none; text-align:center; color:#e07070; font-size:0.88rem; margin-top:4px; }
   </style>
 </head>
 <body>
@@ -76,20 +66,18 @@
     </div>
     <h1>Client <span>Reviews</span></h1>
     <p>Hear from homeowners across North Lake Tahoe &amp; Truckee</p>
-    <a href="index.html" class="back-link">← Back to Main Site</a>
+    <a href="/" class="back-link">← Back to Main Site</a>
   </header>
 
-  <!-- Approved reviews -->
   <section class="reviews-section">
     <h2 class="section-title">What Our Clients Say</h2>
     <div id="reviews-list" class="reviews-grid">
-      <p class="no-reviews" id="loading-msg">Loading reviews...</p>
+      <p class="no-reviews">Loading reviews…</p>
     </div>
   </section>
 
   <div class="divider"></div>
 
-  <!-- Submit form -->
   <section class="submit-section">
     <h2>Share Your Experience</h2>
     <form class="submit-form" id="review-form" novalidate>
@@ -99,7 +87,7 @@
       </div>
       <div>
         <label for="r-text">Your Review *</label>
-        <textarea id="r-text" placeholder="Tell us about the work James did for you..." required></textarea>
+        <textarea id="r-text" placeholder="Tell us about the work James did for you…" required></textarea>
       </div>
       <div>
         <label>Photo (optional)</label>
@@ -109,68 +97,59 @@
       <p class="error-msg" id="form-error"></p>
     </form>
     <div class="success-msg" id="success-msg">
-      Thanks for sharing! Your review has been submitted and is pending approval. James will review it shortly.
+      Thanks for sharing! Your review has been submitted and is pending approval.
     </div>
   </section>
 
-  <!-- Image lightbox -->
   <div class="r-lightbox" id="r-lightbox">
     <button class="r-lightbox-close" id="r-lb-close">&times;</button>
     <img id="r-lb-img" src="" alt="" />
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-  <script src="firebase-config.js"></script>
   <script>
-    firebase.initializeApp(firebaseConfig);
-    const db      = firebase.firestore();
-    const storage = firebase.storage();
-
-    // ── Load approved reviews ──────────────────────────────────────
+    // ── Load reviews ───────────────────────────────────────────────
     const reviewsList = document.getElementById('reviews-list');
-    const loadingMsg  = document.getElementById('loading-msg');
 
-    db.collection('reviews')
-      .where('status', '==', 'approved')
-      .orderBy('approvedAt', 'desc')
-      .onSnapshot(snapshot => {
+    async function loadReviews() {
+      try {
+        const res     = await fetch('/api/reviews');
+        const reviews = await res.json();
         reviewsList.innerHTML = '';
-        if (snapshot.empty) {
+        if (!reviews.length) {
           reviewsList.innerHTML = '<p class="no-reviews">No reviews yet — be the first!</p>';
           return;
         }
-        snapshot.forEach(doc => {
-          const r = doc.data();
+        reviews.forEach(r => {
           const card = document.createElement('div');
           card.className = 'review-card';
           card.innerHTML = `
             <div class="review-card-header">
               <span class="review-name">${esc(r.name)}</span>
-              <span class="review-date">${fmtDate(r.approvedAt)}</span>
+              <span class="review-date">${fmtDate(r.approved_at)}</span>
             </div>
             <p class="review-text">${esc(r.text)}</p>
-            ${r.imageUrl ? `<img src="${r.imageUrl}" class="review-img" alt="Review photo" />` : ''}
+            ${r.image_url ? `<img src="${r.image_url}" class="review-img" alt="Review photo" />` : ''}
           `;
-          if (r.imageUrl) {
-            card.querySelector('.review-img').addEventListener('click', () => openLightbox(r.imageUrl));
+          if (r.image_url) {
+            card.querySelector('.review-img').addEventListener('click', () => openLightbox(r.image_url));
           }
           reviewsList.appendChild(card);
         });
-      }, () => {
-        loadingMsg && (loadingMsg.textContent = 'Could not load reviews.');
-      });
+      } catch {
+        reviewsList.innerHTML = '<p class="no-reviews">Could not load reviews right now.</p>';
+      }
+    }
 
-    // ── Submit form ────────────────────────────────────────────────
+    loadReviews();
+
+    // ── Submit ─────────────────────────────────────────────────────
     document.getElementById('review-form').addEventListener('submit', async e => {
       e.preventDefault();
-      const name  = document.getElementById('r-name').value.trim();
-      const text  = document.getElementById('r-text').value.trim();
-      const file  = document.getElementById('r-photo').files[0];
-      const btn   = document.getElementById('submit-btn');
-      const errEl = document.getElementById('form-error');
+      const name   = document.getElementById('r-name').value.trim();
+      const text   = document.getElementById('r-text').value.trim();
+      const file   = document.getElementById('r-photo').files[0];
+      const btn    = document.getElementById('submit-btn');
+      const errEl  = document.getElementById('form-error');
 
       errEl.style.display = 'none';
       if (!name || !text) {
@@ -183,25 +162,17 @@
       btn.textContent = 'Submitting…';
 
       try {
-        let imageUrl = null;
-        if (file) {
-          const ref = storage.ref(`reviews/${Date.now()}_${file.name}`);
-          await ref.put(file);
-          imageUrl = await ref.getDownloadURL();
-        }
+        const body = new FormData();
+        body.append('name', name);
+        body.append('text', text);
+        if (file) body.append('photo', file);
 
-        await db.collection('reviews').add({
-          name,
-          text,
-          imageUrl,
-          status: 'pending',
-          submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-          approvedAt:  null
-        });
+        const res = await fetch('/api/reviews', { method: 'POST', body });
+        if (!res.ok) throw new Error();
 
         document.getElementById('review-form').style.display = 'none';
         document.getElementById('success-msg').style.display = 'block';
-      } catch (err) {
+      } catch {
         errEl.textContent = 'Something went wrong. Please try again.';
         errEl.style.display = 'block';
         btn.disabled = false;
@@ -224,7 +195,7 @@
     }
     function fmtDate(ts) {
       if (!ts) return '';
-      return ts.toDate().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+      return new Date(ts).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
     }
   </script>
 </body>

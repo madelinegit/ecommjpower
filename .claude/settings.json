@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git config *)",
+      "Bash(gh auth *)",
+      "Bash(git init *)",
+      "Bash(git commit *)",
+      "Bash(git remote *)",
+      "Bash(git branch *)",
+      "Bash(git pull *)",
+      "Read(//c/Users/madel/**)",
+      "Bash(cp /c/Users/madel/Downloads/GALLERY_IMG_2025.12.14_16.16.12.jpg /c/Users/madel/jpower/gallery-1.jpg)",
+      "Bash(cp '/c/Users/madel/Downloads/GALLERY_IMG_2025.12.14_16.16.12 \\(1\\).jpg' /c/Users/madel/jpower/gallery-2.jpg)",
+      "Bash(cp '/c/Users/madel/Downloads/GALLERY_IMG_2025.12.14_16.16.12 \\(2\\).jpg' /c/Users/madel/jpower/gallery-3.jpg)",
+      "Bash(cp '/c/Users/madel/Downloads/GALLERY_IMG_2025.12.14_16.16.12 \\(3\\).jpg' /c/Users/madel/jpower/gallery-4.jpg)",
+      "Bash(cp '/c/Users/madel/Downloads/GALLERY_IMG_2025.12.14_16.16.12 \\(4\\).jpg' /c/Users/madel/jpower/gallery-5.jpg)",
+      "Bash(rm -f gallery-1.jpg gallery-2.jpg gallery-3.jpg gallery-4.jpg gallery-5.jpg gallery-6.jpg gallery-7.jpg gallery-8.jpg gallery-9.jpg gallery-10.jpg gallery-11.jpg gallery-12.jpg gallery-13.jpg)",
+      "Bash(rm -f before-after/project3-before.jpg before-after/project3-after.jpg)",
+      "Bash(gh api *)",
+      "Bash(curl -s \"https://api.github.com/repos/madelinegit/ecommjpower/pages\")",
+      "Bash(curl -s \"https://api.github.com/repos/madelinegit/ecommjpower/deployments?per_page=3\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(x.get\\('created_at'\\), x.get\\('environment'\\), x.get\\('description',''\\)\\) for x in d]\")",
+      "Bash(curl -s \"https://api.github.com/repos/madelinegit/ecommjpower/deployments?per_page=1\")",
+      "Bash(python3 -c ' *)",
+      "Bash(git rm *)",
+      "Bash(curl -s \"https://jpowercreations.com\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\madel\\OneDrive\\Desktop",
+      "C:\\Users\\madel\\Downloads"
+    ]
+  }
+}

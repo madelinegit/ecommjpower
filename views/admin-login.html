@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Sign In | Power Creations</title>
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1a1208; --card: #221a0e; --border: #3a2a14;
+      --text: #f0e8d8; --muted: #a89070; --accent: #c8a96e; --gold: #e4c580;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      min-height: 100dvh; display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 36px 28px; width: 100%; max-width: 400px; text-align: center;
+    }
+    .box img {
+      width: 76px; height: 76px; object-fit: cover; border-radius: 50%;
+      border: 1.5px solid var(--accent); margin-bottom: 18px;
+    }
+    h1 { font-size: 1.45rem; color: var(--gold); margin-bottom: 6px; }
+    .sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 26px; }
+    label {
+      display: block; text-align: left; font-size: 0.82rem; color: var(--muted);
+      margin-bottom: 6px; letter-spacing: 0.04em;
+    }
+    input {
+      width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 8px; color: var(--text); font-family: inherit;
+      font-size: 1.05rem; padding: 14px; margin-bottom: 16px;
+      outline: none; transition: border-color 0.2s; min-height: 52px;
+    }
+    input:focus { border-color: var(--accent); }
+    button {
+      width: 100%; min-height: 52px; background: var(--accent); color: #1a1208;
+      border: none; border-radius: 8px; font-family: inherit;
+      font-size: 1.05rem; font-weight: 700; cursor: pointer;
+      transition: background 0.2s; letter-spacing: 0.03em;
+    }
+    button:hover:not(:disabled) { background: var(--gold); }
+    button:disabled { opacity: 0.55; cursor: default; }
+    .msg {
+      color: #e89090; font-size: 0.9rem; margin-top: 14px; min-height: 22px;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <main class="box">
+    <img src="/logo.png" alt="Power Creations" />
+    <h1>Sign In</h1>
+    <p class="sub">Power Creations &mdash; your website</p>
+
+    <form id="form" novalidate>
+      <label for="email">Email</label>
+      <input type="email" id="email" autocomplete="username"
+             inputmode="email" autocapitalize="none" spellcheck="false" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" autocomplete="current-password" required />
+
+      <button type="submit" id="submit">Sign In</button>
+      <p class="msg" id="msg" role="status"></p>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('form');
+    const btn  = document.getElementById('submit');
+    const msg  = document.getElementById('msg');
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+      msg.textContent = '';
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'That did not work. Try again.');
+        window.location.href = '/admin';
+      } catch (err) {
+        msg.textContent = err.message;
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

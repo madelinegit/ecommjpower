@@ -55,14 +55,30 @@
 </head>
 <body>
 
-  <!-- TAB NAV -->
-  <nav class="tab-nav">
-    <button class="tab-btn" data-tab="creations">James Power Creations</button>
-    <button class="tab-btn active" data-tab="services">Home Services</button>
+  <!-- VIEW TOGGLE -->
+  <nav class="view-nav" role="tablist" aria-label="Choose which business to view">
+    <button class="view-btn active" data-view="art" role="tab" aria-selected="true">
+      <svg class="view-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 3l7 4v10l-7 4-7-4V7z"/><path d="M12 3v18M5 7l7 4 7-4"/>
+      </svg>
+      <span class="view-btn-text">
+        <span class="view-btn-title">Art Gallery</span>
+        <span class="view-btn-sub">Handcrafted goods</span>
+      </span>
+    </button>
+    <button class="view-btn" data-view="home" role="tab" aria-selected="false">
+      <svg class="view-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="view-btn-text">
+        <span class="view-btn-title">Home Projects</span>
+        <span class="view-btn-sub">Repairs &amp; services</span>
+      </span>
+    </button>
   </nav>
 
-  <!-- ===== TAB 1: CREATIONS ===== -->
-  <section id="tab-creations" class="tab-content">
+  <!-- ===== VIEW 1: ART GALLERY ===== -->
+  <section id="tab-art" class="tab-content active">
 
     <header class="hero">
       <div class="hero-badge">
@@ -186,8 +202,8 @@
 
   </section>
 
-  <!-- ===== TAB 2: SERVICES ===== -->
-  <section id="tab-services" class="tab-content active">
+  <!-- ===== VIEW 2: HOME PROJECTS ===== -->
+  <section id="tab-home" class="tab-content">
 
     <header class="hero hero--services">
       <div class="hero-badge">
@@ -439,6 +455,22 @@
       <video id="lb-video" class="lb-media" controls playsinline></video>
     </div>
     <p class="lb-hint">Tap outside or swipe to close</p>
+  </div>
+
+  <!-- STICKY MOBILE CALL / TEXT BAR -->
+  <div class="callbar">
+    <a href="tel:7723418850" class="callbar-btn callbar-btn--call">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+      </svg>
+      <span>Call 772-341-8850</span>
+    </a>
+    <a href="sms:7723418850" class="callbar-btn callbar-btn--text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+      </svg>
+      <span>Text</span>
+    </a>
   </div>
 
   <script src="app.js"></script>

@@ -33,38 +33,109 @@ body {
 img { display: block; width: 100%; height: 100%; object-fit: cover; }
 a { text-decoration: none; color: inherit; }
 
-/* ===== TAB NAV ===== */
-.tab-nav {
+/* ===== VIEW TOGGLE ===== */
+.view-nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 6px;
   background: var(--bg-card);
   border-bottom: 2px solid var(--wood-mid);
-  height: var(--tab-h);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.45);
 }
 
-.tab-btn {
-  flex: 1;
-  background: none;
-  border: none;
+.view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 58px;
+  padding: 8px 6px;
+  background: rgba(0,0,0,0.28);
+  border: 1.5px solid var(--wood-mid);
+  border-radius: 8px;
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   cursor: pointer;
-  padding: 0 8px;
-  transition: color 0.2s, background 0.2s;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
+  text-align: left;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
 }
 
-.tab-btn.active {
+.view-btn-icon { width: 22px; height: 22px; flex-shrink: 0; opacity: 0.7; }
+
+.view-btn-text { display: flex; flex-direction: column; line-height: 1.2; }
+
+.view-btn-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.view-btn-sub {
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.72;
+  margin-top: 2px;
+}
+
+.view-btn.active {
+  background: var(--accent);
+  border-color: var(--accent-bright);
+  color: var(--wood-dark);
+  box-shadow: 0 2px 12px rgba(200,169,110,0.28);
+}
+.view-btn.active .view-btn-icon { opacity: 1; }
+.view-btn.active .view-btn-sub  { opacity: 0.78; }
+
+.view-btn:not(.active):hover { border-color: var(--accent); color: var(--wood-light); }
+
+/* ===== STICKY MOBILE CALL BAR ===== */
+.callbar {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  background: rgba(26,18,8,0.96);
+  border-top: 1.5px solid var(--wood-mid);
+  backdrop-filter: blur(8px);
+}
+
+.callbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: filter 0.15s, transform 0.1s;
+}
+.callbar-btn:active { transform: scale(0.98); }
+.callbar-btn svg { width: 19px; height: 19px; flex-shrink: 0; }
+
+.callbar-btn--call { flex: 1 1 auto; background: var(--accent); color: var(--wood-dark); }
+.callbar-btn--text {
+  flex: 0 0 104px;
+  background: transparent;
+  border: 1.5px solid var(--accent);
   color: var(--accent-bright);
-  border-bottom-color: var(--accent);
-  background: rgba(200,169,110,0.06);
+}
+
+/* keep the footer clear of the fixed bar */
+body { padding-bottom: 74px; }
+
+@media (min-width: 760px) {
+  .callbar { display: none; }
+  body { padding-bottom: 0; }
 }
 
 /* ===== TAB CONTENT ===== */
@@ -730,7 +801,10 @@ a { text-decoration: none; color: inherit; }
 
 /* ===== DESKTOP BREAKPOINTS ===== */
 @media (min-width: 600px) {
-  .tab-btn { font-size: 0.9rem; }
+  .view-nav { gap: 10px; padding: 8px 10px; max-width: 900px; margin: 0 auto; }
+  .view-btn { min-height: 64px; }
+  .view-btn-title { font-size: 1.05rem; }
+  .view-btn-icon  { width: 26px; height: 26px; }
 
   .lantern-showcase {
     flex-direction: row;

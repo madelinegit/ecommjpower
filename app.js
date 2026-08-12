@@ -1,14 +1,40 @@
-// Tab switching
-document.querySelectorAll('.tab-btn').forEach(btn => {
+// ===== VIEW SWITCHING =====
+// Art Gallery is the default landing view. A hash in the URL overrides it.
+const VIEW_HASHES = {
+  '#home-projects': 'home',
+  '#home-services': 'home',   // legacy links
+  '#art-gallery':   'art',
+  '#art':           'art'
+};
+
+function setView(view, scroll) {
+  document.querySelectorAll('.view-btn').forEach(b => {
+    const on = b.dataset.view === view;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  const section = document.getElementById('tab-' + view);
+  if (section) section.classList.add('active');
+  if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function viewFromHash() {
+  return VIEW_HASHES[window.location.hash.toLowerCase()] || null;
+}
+
+document.querySelectorAll('.view-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const target = btn.dataset.tab;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + target).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const view = btn.dataset.view;
+    // Keep the URL shareable without adding a history entry per tap.
+    history.replaceState(null, '', view === 'home' ? '#home-projects' : '#art-gallery');
+    setView(view, true);
   });
 });
+
+// Honor the hash on load, and on back/forward or an external #home-projects link.
+setView(viewFromHash() || 'art', false);
+window.addEventListener('hashchange', () => setView(viewFromHash() || 'art', true));
 
 // ===== BEFORE & AFTER SLIDERS =====
 document.querySelectorAll('.ba-slider').forEach(slider => {

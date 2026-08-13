@@ -6,6 +6,7 @@ const path = require('path');
 const db = require('./db');
 const auth = require('./auth');
 const storage = require('./storage');
+const gallery = require('./gallery');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -78,6 +79,9 @@ app.post('/api/admin/logout', (req, res) => {
 app.get('/api/admin/me', auth.requireAuth, (req, res) => {
   res.json({ email: req.admin.email });
 });
+
+// ── Gallery API ────────────────────────────────────────────────────────
+app.use(gallery.router);
 
 // ── Public reviews API ─────────────────────────────────────────────────
 app.get('/api/reviews', async (req, res) => {

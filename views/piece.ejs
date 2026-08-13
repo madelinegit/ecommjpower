@@ -58,6 +58,13 @@
       <% if (piece.price) { %><p class="piece-price"><%= piece.price %></p><% } %>
       <% if (piece.description) { %><p class="piece-desc"><%= piece.description %></p><% } %>
 
+      <% var bullets = toBullets(piece.features); %>
+      <% if (bullets.length) { %>
+      <ul class="lantern-features piece-features">
+        <% bullets.forEach(function (b) { %><li><%= b %></li><% }); %>
+      </ul>
+      <% } %>
+
       <div class="piece-cta">
         <a href="<%- smsLink(piece) %>" class="btn-primary">
           <%= piece.category === 'art' ? 'Ask about this piece' : 'Get a quote like this' %>

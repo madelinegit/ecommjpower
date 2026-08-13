@@ -95,25 +95,8 @@
       <p class="hero-location">Power Creations LLC &mdash; North Lake Tahoe &amp; Truckee, CA</p>
     </header>
 
-    <!-- FEATURED PIECE -->
-    <% if (featured.art) { %>
-    <section class="featured">
-      <div class="featured-badge">Featured Piece</div>
-      <div class="lantern-showcase">
-        <div class="lantern-img-wrap">
-          <a href="/piece/<%= featured.art.id %>/<%= slug(featured.art.title) %>">
-            <img src="<%= featured.art.images[0].url %>" alt="<%= featured.art.title %>" class="lantern-photo" />
-          </a>
-        </div>
-        <div class="lantern-info">
-          <h2><%= featured.art.title %></h2>
-          <% if (featured.art.description) { %><p><%= featured.art.description %></p><% } %>
-          <% if (featured.art.price) { %><p class="piece-price"><%= featured.art.price %></p><% } %>
-          <a href="<%- smsLink(featured.art) %>" class="btn-primary">Ask about this piece</a>
-        </div>
-      </div>
-    </section>
-    <% } else { %>
+    <!-- Shown only until the first real piece is added. -->
+    <% if (!items.art.length) { %>
     <!-- FEATURED PRODUCT -->
     <section class="featured">
       <div class="featured-badge">Featured Product</div>
@@ -134,7 +117,6 @@
         </div>
       </div>
     </section>
-
     <% } %>
 
     <!-- GALLERY -->
@@ -144,13 +126,17 @@
       <p class="section-sub">Tap any piece to see it up close.</p>
       <div class="tile-grid">
         <% items.art.forEach(function (it) { %>
-        <a class="tile" href="/piece/<%= it.id %>/<%= slug(it.title) %>" data-piece="<%= it.id %>">
+        <a class="tile<%= it.featured ? ' tile--hero' : '' %><%= it.availability === 'sold' ? ' tile--sold' : '' %>"
+           href="/piece/<%= it.id %>/<%= slug(it.title) %>" data-piece="<%= it.id %>">
           <span class="tile-frame">
             <img src="<%= it.images[0].thumb_url %>" alt="<%= it.title %>" loading="lazy" decoding="async" />
+            <% if (it.availability === 'sold') { %><span class="chip chip--sold">Sold</span>
+            <% } else if (it.availability === 'made_to_order') { %><span class="chip chip--order">Made to order</span>
+            <% } %>
           </span>
           <span class="tile-cap">
             <span class="tile-title"><%= it.title %></span>
-            <% if (it.price) { %><span class="tile-price"><%= it.price %></span><% } %>
+            <span class="tile-price"><%= it.price ? it.price : 'Ask' %></span>
           </span>
         </a>
         <% }); %>
@@ -338,13 +324,17 @@
       <p class="section-sub">Tap any job to see it up close.</p>
       <div class="tile-grid">
         <% items.home.forEach(function (it) { %>
-        <a class="tile" href="/piece/<%= it.id %>/<%= slug(it.title) %>" data-piece="<%= it.id %>">
+        <a class="tile<%= it.featured ? ' tile--hero' : '' %><%= it.availability === 'sold' ? ' tile--sold' : '' %>"
+           href="/piece/<%= it.id %>/<%= slug(it.title) %>" data-piece="<%= it.id %>">
           <span class="tile-frame">
             <img src="<%= it.images[0].thumb_url %>" alt="<%= it.title %>" loading="lazy" decoding="async" />
+            <% if (it.availability === 'sold') { %><span class="chip chip--sold">Sold</span>
+            <% } else if (it.availability === 'made_to_order') { %><span class="chip chip--order">Made to order</span>
+            <% } %>
           </span>
           <span class="tile-cap">
             <span class="tile-title"><%= it.title %></span>
-            <% if (it.price) { %><span class="tile-price"><%= it.price %></span><% } %>
+            <span class="tile-price"><%= it.price ? it.price : 'Ask' %></span>
           </span>
         </a>
         <% }); %>
@@ -508,6 +498,7 @@
         <h2 class="detail-title"></h2>
         <p class="detail-price"></p>
         <p class="detail-desc"></p>
+        <ul class="lantern-features detail-features"></ul>
         <a class="detail-cta btn-primary" href="#"></a>
         <a class="detail-full" href="#">Open full page</a>
       </div>

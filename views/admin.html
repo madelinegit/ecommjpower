@@ -87,6 +87,9 @@
     .nophoto { color: var(--dim); font-size: 0.86rem; margin-bottom: 11px; font-style: italic; }
 
     label.fl { display: block; font-size: 0.8rem; color: var(--muted); margin: 9px 0 5px; letter-spacing: 0.03em; }
+    label.fl .sub { color: var(--dim); font-style: italic; font-size: 0.76rem; letter-spacing: 0; }
+    /* Monospace makes one-bullet-per-line visually obvious while typing. */
+    textarea.bullets { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.92rem; line-height: 1.7; min-height: 96px; }
     input[type="text"], textarea {
       width: 100%; background: var(--bg); border: 1.5px solid var(--border);
       border-radius: 8px; color: var(--text); font-family: inherit;
@@ -106,7 +109,34 @@
     .btn-del { background: transparent; border: 1.5px solid var(--red); color: #d98080; }
     .btn-arrow { background: transparent; border: 1.5px solid var(--border); color: var(--gold); min-width: 52px; font-size: 1.2rem; }
     .btn:disabled { opacity: 0.5; cursor: default; }
-    .ok { color: var(--green); font-size: 0.85rem; display: none; }
+    .btn-save.done { background: var(--green); color: #fff; }
+
+    /* Confirmation has to outlive the tap and be impossible to miss, so it
+       sits above the thumb rather than inline where a re-render can eat it. */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translate(-50%, 140%);
+      z-index: 400;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      max-width: calc(100% - 28px);
+      padding: 14px 20px;
+      border-radius: 10px;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.55);
+      opacity: 0;
+      transition: transform 0.28s cubic-bezier(0.2,0.9,0.3,1), opacity 0.28s;
+      pointer-events: none;
+    }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+    .toast.bad  { background: var(--red); }
+    .toast svg  { width: 19px; height: 19px; flex-shrink: 0; }
 
     .addphoto { position: relative; overflow: hidden; }
     .addphoto input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
@@ -176,6 +206,8 @@
     </section>
   </div>
 
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
   <!-- NEW PIECE -->
   <div class="sheet" id="sheet">
     <div class="sheet-in">
@@ -191,8 +223,11 @@
       <label class="fl" for="newTitle">Name</label>
       <input type="text" id="newTitle" placeholder="Stained glass lantern" />
 
-      <label class="fl" for="newDesc">About it (optional)</label>
-      <textarea id="newDesc" placeholder="Walnut frame, hand cut glass…"></textarea>
+      <label class="fl" for="newDesc">About it <em class="sub">&mdash; a paragraph (optional)</em></label>
+      <textarea id="newDesc" placeholder="Walnut frame with hand cut glass…"></textarea>
+
+      <label class="fl" for="newFeatures">Bullet points <em class="sub">&mdash; one per line (optional)</em></label>
+      <textarea id="newFeatures" class="bullets" placeholder="Solid hardwood frame&#10;Hand-cut art glass panels&#10;Custom sizes available"></textarea>
 
       <label class="fl" for="newPrice">Price (optional)</label>
       <input type="text" id="newPrice" placeholder="$250 or From $180" />
@@ -225,6 +260,20 @@ async function api(url, opts) {
   return res;
 }
 
+// ── Confirmation ──────────────────────────────────────────────────────
+const TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" ' +
+             'stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+let toastTimer;
+
+function toast(message, bad) {
+  const el = $('toast');
+  el.innerHTML = (bad ? '' : TICK) + '<span>' + esc(message) + '</span>';
+  el.classList.toggle('bad', !!bad);
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
 document.querySelectorAll('.secnav button').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.secnav button').forEach(x => x.classList.remove('on'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
@@ -238,6 +287,17 @@ $('signout').addEventListener('click', async () => {
 });
 
 // ── pieces ────────────────────────────────────────────────────────────
+const AVAIL = [
+  { v: 'available',     label: 'For sale' },
+  { v: 'made_to_order', label: 'Made to order' },
+  { v: 'sold',          label: 'Sold' }
+];
+
+function availOf(id) {
+  const on = document.querySelector('[data-availfor="' + id + '"] button.on');
+  return on ? on.dataset.avail : 'available';
+}
+
 let category = 'art';
 let items = [];
 
@@ -286,10 +346,20 @@ function render() {
 
       '<label class="fl">Name</label>' +
       '<input type="text" id="t' + it.id + '" value="' + esc(it.title) + '" />' +
-      '<label class="fl">About it</label>' +
-      '<textarea id="d' + it.id + '">' + esc(it.description || '') + '</textarea>' +
+      '<label class="fl">About it <em class="sub">&mdash; a paragraph</em></label>' +
+      '<textarea id="d' + it.id + '" placeholder="Walnut frame with hand cut glass…">' + esc(it.description || '') + '</textarea>' +
+      '<label class="fl">Bullet points <em class="sub">&mdash; one per line</em></label>' +
+      '<textarea id="f' + it.id + '" class="bullets" placeholder="Solid hardwood frame&#10;Hand-cut art glass panels&#10;Custom sizes available">' + esc(it.features || '') + '</textarea>' +
       '<label class="fl">Price</label>' +
       '<input type="text" id="p' + it.id + '" value="' + esc(it.price || '') + '" />' +
+      '<label class="fl">Can someone buy this?</label>' +
+      '<div class="catrow avail" data-availfor="' + it.id + '">' +
+        AVAIL.map(function (a) {
+          return '<button type="button" data-avail="' + a.v + '"' +
+                 ((it.availability || 'available') === a.v ? ' class="on"' : '') +
+                 '>' + a.label + '</button>';
+        }).join('') +
+      '</div>' +
 
       '<div class="row">' +
         '<button class="btn btn-arrow" data-up="' + it.id + '"' + (idx === 0 ? ' disabled' : '') + '>&uarr;</button>' +
@@ -311,69 +381,118 @@ function render() {
 function wire() {
   const box = $('pieces');
 
+  box.querySelectorAll('.avail button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      b.parentNode.querySelectorAll('button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+    });
+  });
+
   box.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', async () => {
     const id = b.dataset.save;
+    const original = b.textContent;
+
     b.disabled = true;
-    const res = await api('/api/admin/gallery/' + id, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: $('t' + id).value,
-        description: $('d' + id).value,
-        price: $('p' + id).value,
-        category
-      })
-    });
+    b.textContent = 'Saving…';
+
+    let res, data = {};
+    try {
+      res = await api('/api/admin/gallery/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: $('t' + id).value,
+          description: $('d' + id).value,
+          features: $('f' + id).value,
+          price: $('p' + id).value,
+          availability: availOf(id),
+          category
+        })
+      });
+      data = await res.json().catch(() => ({}));
+    } catch (e) {
+      if (e.message === 'signed out') return;
+      b.disabled = false;
+      b.textContent = original;
+      toast('No connection. Nothing was lost — tap Save again.', true);
+      return;
+    }
+
     b.disabled = false;
-    if (!res.ok) { const d = await res.json().catch(() => ({})); alert(d.error || 'Could not save that.'); return; }
-    const ok = $('ok' + id);
-    ok.style.display = 'inline'; setTimeout(() => ok.style.display = 'none', 2000);
+
+    if (!res.ok) {
+      b.textContent = original;
+      toast(data.error || 'Could not save that.', true);
+      return;
+    }
+
+    // Deliberately no reload here: re-rendering the list destroys the button
+    // mid-confirmation, which is why "Saved" used to flash and vanish.
+    b.textContent = 'Saved ✓';
+    b.classList.add('done');
+    toast('Changes saved');
+    setTimeout(() => { b.textContent = original; b.classList.remove('done'); }, 2400);
+  }));
+
+  const move = dir => async b => {
+    b.disabled = true;
+    await api('/api/admin/gallery/' + b.dataset[dir] + '/move', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ direction: dir })
+    });
     await loadPieces();
-  }));
-
-  box.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', async () => {
-    await api('/api/admin/gallery/' + b.dataset.up + '/move', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ direction: 'up' })
-    });
-    loadPieces();
-  }));
-
-  box.querySelectorAll('[data-down]').forEach(b => b.addEventListener('click', async () => {
-    await api('/api/admin/gallery/' + b.dataset.down + '/move', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ direction: 'down' })
-    });
-    loadPieces();
-  }));
+    toast(dir === 'up' ? 'Moved up' : 'Moved down');
+  };
+  box.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => move('up')(b)));
+  box.querySelectorAll('[data-down]').forEach(b => b.addEventListener('click', () => move('down')(b)));
 
   box.querySelectorAll('[data-feat]').forEach(b => b.addEventListener('click', async () => {
+    b.disabled = true;
     await api('/api/admin/gallery/' + b.dataset.feat + '/feature', { method: 'POST' });
-    loadPieces();
+    await loadPieces();
+    toast('Now showing at the top');
   }));
 
   box.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
-    if (!confirm('Delete this for good? This cannot be undone.')) return;
+    const name = ($('t' + b.dataset.del) || {}).value || 'this piece';
+    if (!confirm('Delete "' + name + '" for good?\n\nThis cannot be undone.')) return;
+    b.disabled = true;
     await api('/api/admin/gallery/' + b.dataset.del, { method: 'DELETE' });
-    loadPieces();
+    await loadPieces();
+    toast('Deleted');
   }));
 
   box.querySelectorAll('[data-rmphoto]').forEach(b => b.addEventListener('click', async () => {
     if (!confirm('Remove this photo?')) return;
     await api('/api/admin/gallery/' + b.dataset.item + '/photos/' + b.dataset.rmphoto, { method: 'DELETE' });
-    loadPieces();
+    await loadPieces();
+    toast('Photo removed');
   }));
 
   box.querySelectorAll('[data-addphoto]').forEach(inp => inp.addEventListener('change', async e => {
     const files = [...e.target.files];
     if (!files.length) return;
     const label = inp.closest('label');
+    const original = label.firstChild.textContent;
     label.firstChild.textContent = 'Uploading…';
-    const fd = new FormData();
-    files.forEach(f => fd.append('photos', f));
-    const res = await api('/api/admin/gallery/' + inp.dataset.addphoto + '/photos', { method: 'POST', body: fd });
-    if (!res.ok) { const d = await res.json().catch(() => ({})); alert(d.error || 'That photo would not upload.'); }
-    loadPieces();
+
+    let res, d = {};
+    try {
+      const fd = new FormData();
+      files.forEach(f => fd.append('photos', f));
+      res = await api('/api/admin/gallery/' + inp.dataset.addphoto + '/photos', { method: 'POST', body: fd });
+      d = await res.json().catch(() => ({}));
+    } catch (err) {
+      if (err.message === 'signed out') return;
+      label.firstChild.textContent = original;
+      toast('Upload stopped. Check your signal and try again.', true);
+      return;
+    }
+
+    label.firstChild.textContent = original;
+    if (!res.ok) { toast(d.error || 'That photo would not upload.', true); return; }
+    await loadPieces();
+    toast(files.length === 1 ? 'Photo added' : files.length + ' photos added');
   }));
 }
 
@@ -390,6 +509,7 @@ $('add').addEventListener('click', () => {
   newCategory = category;
   document.querySelectorAll('#newCat [data-cat]').forEach(x => x.classList.toggle('on', x.dataset.cat === category));
   $('newTitle').value = ''; $('newDesc').value = ''; $('newPrice').value = '';
+  $('newFeatures').value = '';
   $('newPhotos').value = ''; $('picked').textContent = '';
   $('err').style.display = 'none';
   $('sheet').classList.add('on');
@@ -416,6 +536,7 @@ $('save').addEventListener('click', () => {
   const fd = new FormData();
   fd.append('title', title);
   fd.append('description', $('newDesc').value);
+  fd.append('features', $('newFeatures').value);
   fd.append('price', $('newPrice').value);
   fd.append('category', newCategory);
   [...$('newPhotos').files].forEach(f => fd.append('photos', f));

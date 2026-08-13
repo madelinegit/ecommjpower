@@ -80,6 +80,7 @@ app.get('/', async (req, res, next) => {
         id: i.id,
         title: i.title,
         description: i.description,
+        features: render.bullets(i.features),
         price: i.price,
         category: i.category,
         images: i.images.map(im => im.url),
@@ -119,6 +120,7 @@ app.get('/piece/:id/:slug?', async (req, res, next) => {
     res.render('piece', {
       piece,
       metaDescription: render.metaDescriptionFor(piece),
+      toBullets: render.bullets,
       smsLink: render.smsLink,
       mailLink: render.mailLink
     });
@@ -127,16 +129,23 @@ app.get('/piece/:id/:slug?', async (req, res, next) => {
   }
 });
 
-// ── Static ─────────────────────────────────────────────────────────────
-// Uploaded photos, served off the Railway Volume when R2 is not in use.
+// ── Uploaded photos ────────────────────────────────────────────────────
+// Filenames contain a UUID and the bytes never change, so these can be
+// cached hard and forever.
 if (!storage.r2Configured) {
-  app.use('/media', express.static(storage.uploadsDir, {
-    maxAge: '365d',
-    immutable: true,
-    fallthrough: true
-  }));
-  // Photos uploaded before the move to /media.
-  app.use('/local-uploads', express.static(storage.uploadsDir, { maxAge: '365d' }));
+  app.get(['/media/:name', '/local-uploads/:name'], async (req, res) => {
+    const name = path.basename(req.params.name);
+    try {
+      const file = await storage.getObject(name);
+      if (!file) return res.status(404).end();
+      res.setHeader('Content-Type', file.contentType || 'image/jpeg');
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.end(file.bytes);
+    } catch (err) {
+      console.error('[media] read failed:', err.message);
+      res.status(404).end();
+    }
+  });
 }
 app.use(express.static(path.join(__dirname, 'public'), {
   index: false,   // '/' is rendered above, never served as a flat file

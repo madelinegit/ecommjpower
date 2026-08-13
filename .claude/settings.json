@@ -23,7 +23,10 @@
       "Bash(curl -s \"https://api.github.com/repos/madelinegit/ecommjpower/deployments?per_page=1\")",
       "Bash(python3 -c ' *)",
       "Bash(git rm *)",
-      "Bash(curl -s \"https://jpowercreations.com\")"
+      "Bash(curl -s \"https://jpowercreations.com\")",
+      "Bash(sed -i \"s/module.exports = { slug, smsLink/module.exports = { slug, bullets, smsLink/\" lib/render.js)",
+      "Bash(node -e ' *)",
+      "Bash(node --check lib/render.js)"
     ],
     "additionalDirectories": [
       "C:\\Users\\madel\\OneDrive\\Desktop",

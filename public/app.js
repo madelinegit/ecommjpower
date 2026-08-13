@@ -163,6 +163,15 @@ function openDetail(id, push) {
   descEl.textContent = piece.description || '';
   descEl.style.display = piece.description ? 'block' : 'none';
 
+  const feat = detail.querySelector('.detail-features');
+  feat.innerHTML = '';
+  (piece.features || []).forEach(text => {
+    const li = document.createElement('li');
+    li.textContent = text;
+    feat.appendChild(li);
+  });
+  feat.style.display = (piece.features || []).length ? 'block' : 'none';
+
   const shots = detail.querySelector('.detail-shots');
   shots.innerHTML = '';
   piece.images.forEach((src, i) => {

@@ -380,6 +380,35 @@ body { padding-bottom: 74px; }
 
 .tile { display: block; color: inherit; }
 
+/* The featured piece leads the same grid rather than sitting in its own
+   block above it — one continuous gallery, no dead zone before the goods. */
+.tile--hero { grid-column: 1 / -1; }
+.tile--hero .tile-frame { aspect-ratio: 4/3; }
+.tile--hero .tile-title { font-size: 1.05rem; color: var(--accent-bright); }
+.tile--hero .tile-price { font-size: 0.95rem; }
+
+/* Sold pieces stay on the page: they are the strongest evidence that
+   people actually buy this work. Dimmed, never hidden. */
+.tile--sold .tile-frame img { filter: saturate(0.55) brightness(0.72); }
+.tile--sold .tile-title { color: var(--text-muted); }
+.tile--sold .tile-price { color: var(--text-muted); }
+
+.chip {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 2;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+.chip--sold  { background: rgba(12,7,2,0.88); color: var(--wood-light); border: 1px solid var(--wood-mid); }
+.chip--order { background: var(--accent); color: var(--wood-dark); }
+
 .tile-frame {
   display: block;
   position: relative;

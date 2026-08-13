@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title><%= piece.title %> | <%= piece.category === 'art' ? 'James Power Creations' : 'James Power Home Projects' %> &ndash; North Lake Tahoe</title>
+  <meta name="description" content="<%= metaDescription %>" />
+  <meta property="og:title" content="<%= piece.title %> | Power Creations LLC" />
+  <meta property="og:description" content="<%= metaDescription %>" />
+  <meta property="og:type" content="<%= piece.category === 'art' ? 'product' : 'article' %>" />
+  <% if (piece.images.length) { %>
+  <meta property="og:image" content="<%= piece.images[0].url %>" />
+  <% } %>
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "<%= piece.category === 'art' ? 'Product' : 'Service' %>",
+    "name": <%- JSON.stringify(piece.title) %>,
+    "description": <%- JSON.stringify(metaDescription) %><% if (piece.images.length) { %>,
+    "image": <%- JSON.stringify(piece.images.map(function (i) { return i.url; })) %><% } %>,
+    "brand": { "@type": "Brand", "name": "Power Creations LLC" },
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "Power Creations LLC",
+      "telephone": "+17723418850",
+      "areaServed": "North Lake Tahoe, CA"
+    }
+  }
+  </script>
+</head>
+<body class="piece-page">
+
+  <nav class="piece-nav">
+    <a href="<%= piece.category === 'art' ? '/#art-gallery' : '/#home-projects' %>" class="piece-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      <span><%= piece.category === 'art' ? 'Art Gallery' : 'Home Projects' %></span>
+    </a>
+  </nav>
+
+  <article class="piece-wrap">
+    <% if (piece.images.length) { %>
+    <div class="piece-shots">
+      <% piece.images.forEach(function (img, i) { %>
+      <img src="<%= img.url %>"
+           alt="<%= piece.title %><%= piece.images.length > 1 ? ' — photo ' + (i + 1) : '' %>"
+           <%= i === 0 ? '' : 'loading="lazy"' %> decoding="async" class="piece-shot" />
+      <% }); %>
+    </div>
+    <% } %>
+
+    <div class="piece-body">
+      <h1 class="piece-title"><%= piece.title %></h1>
+      <% if (piece.price) { %><p class="piece-price"><%= piece.price %></p><% } %>
+      <% if (piece.description) { %><p class="piece-desc"><%= piece.description %></p><% } %>
+
+      <div class="piece-cta">
+        <a href="<%- smsLink(piece) %>" class="btn-primary">
+          <%= piece.category === 'art' ? 'Ask about this piece' : 'Get a quote like this' %>
+        </a>
+        <a href="<%- mailLink(piece) %>" class="btn-secondary">Email instead</a>
+      </div>
+
+      <p class="piece-callnote">
+        Or call <a href="tel:7723418850">772-341-8850</a> &mdash; North Lake Tahoe &amp; Truckee, CA
+      </p>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Power Creations LLC &mdash; North Lake Tahoe &amp; Truckee, CA &nbsp;|&nbsp; 772-341-8850</p>
+  </footer>
+
+  <div class="callbar">
+    <a href="tel:7723418850" class="callbar-btn callbar-btn--call">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+      </svg>
+      <span>Call 772-341-8850</span>
+    </a>
+    <a href="<%- smsLink(piece) %>" class="callbar-btn callbar-btn--text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+      </svg>
+      <span>Text</span>
+    </a>
+  </div>
+
+</body>
+</html>

@@ -142,59 +142,75 @@ lightbox.addEventListener('touchend', e => {
   if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 80) closeLightbox();
 }, { passive: true });
 
-// ===== GALLERY ITEMS =====
-function isVideoFile(name) {
-  return /\.(mp4|mov|webm|ogg)$/i.test(name);
+// ===== PIECE DETAIL =====
+// Tiles are real links, so they work with JavaScript off and are crawlable.
+// When JS is available they open in place instead, which is far quicker on a
+// phone than a full page load.
+const PIECES = window.__PIECES__ || {};
+const detail = document.getElementById('detail');
+
+function openDetail(id, push) {
+  const piece = PIECES[id];
+  if (!piece || !detail) return false;
+
+  detail.querySelector('.detail-title').textContent = piece.title;
+
+  const priceEl = detail.querySelector('.detail-price');
+  priceEl.textContent = piece.price || '';
+  priceEl.style.display = piece.price ? 'block' : 'none';
+
+  const descEl = detail.querySelector('.detail-desc');
+  descEl.textContent = piece.description || '';
+  descEl.style.display = piece.description ? 'block' : 'none';
+
+  const shots = detail.querySelector('.detail-shots');
+  shots.innerHTML = '';
+  piece.images.forEach((src, i) => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = piece.title + (piece.images.length > 1 ? ' — photo ' + (i + 1) : '');
+    img.className = 'detail-shot';
+    if (i > 0) img.loading = 'lazy';
+    shots.appendChild(img);
+  });
+
+  const cta = detail.querySelector('.detail-cta');
+  cta.href = piece.sms;
+  cta.textContent = piece.category === 'home' ? 'Get a quote like this' : 'Ask about this piece';
+
+  detail.querySelector('.detail-full').href = piece.href;
+
+  detail.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  shots.scrollTop = 0;
+
+  if (push) history.pushState({ piece: id }, '', piece.href);
+  return true;
 }
 
-document.querySelectorAll('.gallery-item').forEach(item => {
-  item.addEventListener('click', () => {
-    // If the item already has real media loaded, open lightbox
-    const img   = item.querySelector('.gallery-img');
-    const video = item.querySelector('.gallery-video');
+function closeDetail(pop) {
+  if (!detail) return;
+  detail.classList.remove('active');
+  document.body.style.overflow = '';
+  if (!pop && history.state && history.state.piece) history.back();
+}
 
-    if (video && video.src && video.getAttribute('data-loaded')) {
-      openLightbox(video.src, true);
-      return;
-    }
-    if (img && img.src && img.getAttribute('data-loaded')) {
-      openLightbox(img.src, false);
-      return;
-    }
-
-    // Otherwise let them pick a file
-    const input = document.createElement('input');
-    input.type  = 'file';
-    input.accept = 'image/*,video/mp4,video/quicktime,video/webm';
-    input.onchange = e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const url = URL.createObjectURL(file);
-      const placeholder = item.querySelector('.gallery-placeholder');
-      if (placeholder) placeholder.style.display = 'none';
-
-      if (isVideoFile(file.name)) {
-        let v = item.querySelector('.gallery-video');
-        if (!v) {
-          v = document.createElement('video');
-          v.className  = 'gallery-video';
-          v.muted      = true;
-          v.loop       = true;
-          v.playsInline = true;
-          v.autoplay   = true;
-          item.appendChild(v);
-        }
-        v.src = url;
-        v.setAttribute('data-loaded', '1');
-        if (img) img.style.display = 'none';
-      } else {
-        if (img) {
-          img.src = url;
-          img.style.display   = 'block';
-          img.setAttribute('data-loaded', '1');
-        }
-      }
-    };
-    input.click();
+document.querySelectorAll('.tile').forEach(tile => {
+  tile.addEventListener('click', e => {
+    // Let modified clicks open a real tab.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    if (openDetail(tile.dataset.piece, true)) e.preventDefault();
   });
 });
+
+if (detail) {
+  detail.querySelector('.detail-close').addEventListener('click', () => closeDetail(false));
+  detail.addEventListener('click', e => { if (e.target === detail) closeDetail(false); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && detail.classList.contains('active')) closeDetail(false);
+  });
+  window.addEventListener('popstate', e => {
+    if (e.state && e.state.piece) openDetail(e.state.piece, false);
+    else closeDetail(true);
+  });
+}

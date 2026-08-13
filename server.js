@@ -7,9 +7,13 @@ const db = require('./db');
 const auth = require('./auth');
 const storage = require('./storage');
 const gallery = require('./gallery');
+const render = require('./render');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 app.set('trust proxy', 1);   // Railway terminates TLS in front of us
 
@@ -38,11 +42,97 @@ app.get('/admin', auth.requireAuthPage, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'admin.html'));
 });
 
+// ── Public pages ───────────────────────────────────────────────────────
+// Loads both categories once so the page renders in a single pass. Any
+// database problem falls through to the template's hardcoded content rather
+// than showing an error.
+async function loadGallery() {
+  const empty = { items: { art: [], home: [] }, featured: { art: null, home: null } };
+  if (!db.isReady()) return empty;
+  try {
+    const [art, home] = await Promise.all([
+      gallery.listByCategory('art'),
+      gallery.listByCategory('home')
+    ]);
+    const withPhotos = list => list.filter(i => i.images.length);
+    const art2 = withPhotos(art);
+    const home2 = withPhotos(home);
+    return {
+      items: { art: art2, home: home2 },
+      featured: {
+        art: art2.find(i => i.featured) || null,
+        home: home2.find(i => i.featured) || null
+      }
+    };
+  } catch (err) {
+    console.error('[render] gallery load failed:', err.message);
+    return empty;
+  }
+}
+
+app.get('/', async (req, res, next) => {
+  try {
+    const data = await loadGallery();
+    // Only what the lightbox needs, so the payload stays small.
+    const forClient = {};
+    ['art', 'home'].forEach(cat => data.items[cat].forEach(i => {
+      forClient[i.id] = {
+        id: i.id,
+        title: i.title,
+        description: i.description,
+        price: i.price,
+        category: i.category,
+        images: i.images.map(im => im.url),
+        sms: render.smsLink(i),
+        href: `/piece/${i.id}/${render.slug(i.title)}`
+      };
+    }));
+
+    res.render('index', {
+      items: data.items,
+      featured: data.featured,
+      slug: render.slug,
+      smsLink: render.smsLink,
+      mailLink: render.mailLink,
+      piecesJson: JSON.stringify(forClient).replace(/</g, '\\u003c')
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Per-item page: its own title and description so individual pieces can rank.
+app.get('/piece/:id/:slug?', async (req, res, next) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) return res.redirect('/');
+  if (!db.isReady()) return res.redirect('/');
+
+  try {
+    const { rows } = await db.query(`SELECT * FROM gallery_items WHERE id = $1`, [id]);
+    if (!rows.length) return res.redirect('/');
+    const [piece] = await gallery.attachImages(rows);
+
+    // Keep one canonical URL per piece.
+    const wanted = render.slug(piece.title);
+    if (req.params.slug !== wanted) return res.redirect(301, `/piece/${piece.id}/${wanted}`);
+
+    res.render('piece', {
+      piece,
+      metaDescription: render.metaDescriptionFor(piece),
+      smsLink: render.smsLink,
+      mailLink: render.mailLink
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // ── Static ─────────────────────────────────────────────────────────────
 if (!storage.r2Configured) {
   app.use('/local-uploads', express.static(storage.localDir));
 }
 app.use(express.static(path.join(__dirname), {
+  index: false,   // '/' is rendered above, never served as a flat file
   setHeaders(res, filePath) {
     if (/\.(png|jpe?g|svg|webp)$/i.test(filePath)) {
       res.setHeader('Cache-Control', 'public, max-age=86400');

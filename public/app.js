@@ -37,7 +37,11 @@ setView(viewFromHash() || 'art', false);
 window.addEventListener('hashchange', () => setView(viewFromHash() || 'art', true));
 
 // ===== BEFORE & AFTER SLIDERS =====
-document.querySelectorAll('.ba-slider').forEach(slider => {
+// Extracted so sliders created later — inside the piece detail overlay —
+// get the same behaviour as the ones present at page load.
+function initSlider(slider) {
+  if (slider.dataset.sliderReady) return;
+  slider.dataset.sliderReady = '1';
   const after      = slider.querySelector('.ba-after');
   const beforeDiv  = slider.querySelector('.ba-before');
   const handle     = slider.querySelector('.ba-handle');
@@ -98,7 +102,34 @@ document.querySelectorAll('.ba-slider').forEach(slider => {
     if (dragging && !touchMoved) tryOpenLightbox(e.changedTouches[0].clientX);
     dragging = false; touchMoved = false;
   });
-});
+}
+
+document.querySelectorAll('.ba-slider').forEach(initSlider);
+
+// Builds the drag-to-compare slider markup for a piece that has both a
+// before and an after photo.
+function buildSlider(beforeSrc, afterSrc, title) {
+  const el = document.createElement('div');
+  el.className = 'ba-slider';
+  el.innerHTML =
+    '<div class="ba-before">' +
+      '<img class="ba-img" alt="' + title + ' before" src="' + beforeSrc + '" />' +
+      '<span class="ba-tag ba-tag--before">Before</span>' +
+    '</div>' +
+    '<div class="ba-after">' +
+      '<img class="ba-img" alt="' + title + ' after" src="' + afterSrc + '" />' +
+      '<span class="ba-tag ba-tag--after">After</span>' +
+    '</div>' +
+    '<div class="ba-handle">' +
+      '<div class="ba-handle-line"></div>' +
+      '<div class="ba-handle-circle">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+      '</div>' +
+      '<div class="ba-handle-line"></div>' +
+    '</div>';
+  return el;
+}
 
 // ===== LIGHTBOX =====
 const lightbox = document.getElementById('lightbox');
@@ -107,6 +138,8 @@ const lbVideo  = document.getElementById('lb-video');
 const lbClose  = document.getElementById('lb-close');
 
 function openLightbox(src, isVideo) {
+  // The piece page reuses this script for its slider but has no lightbox.
+  if (!lightbox) return;
   if (isVideo) {
     lbVideo.src = src;
     lbVideo.style.display = 'block';
@@ -124,6 +157,7 @@ function openLightbox(src, isVideo) {
 }
 
 function closeLightbox() {
+  if (!lightbox) return;
   lightbox.classList.remove('active');
   document.body.style.overflow = '';
   lbVideo.pause();
@@ -131,16 +165,20 @@ function closeLightbox() {
   lbImg.src   = '';
 }
 
-lbClose.addEventListener('click', closeLightbox);
-lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+if (lightbox && lbClose) {
+  lbClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+}
 
 // Touch swipe to close on mobile
 let touchStartY = 0;
-lightbox.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
-lightbox.addEventListener('touchend', e => {
-  if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 80) closeLightbox();
-}, { passive: true });
+if (lightbox) {
+  lightbox.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+  lightbox.addEventListener('touchend', e => {
+    if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 80) closeLightbox();
+  }, { passive: true });
+}
 
 // ===== PIECE DETAIL =====
 // Tiles are real links, so they work with JavaScript off and are crawlable.
@@ -174,6 +212,21 @@ function openDetail(id, push) {
 
   const shots = detail.querySelector('.detail-shots');
   shots.innerHTML = '';
+
+  // The comparison leads, because it is the most persuasive thing here.
+  if (piece.before && piece.after) {
+    const wrap = document.createElement('div');
+    wrap.className = 'detail-ba';
+    const slider = buildSlider(piece.before, piece.after, piece.title);
+    wrap.appendChild(slider);
+    const hint = document.createElement('p');
+    hint.className = 'detail-ba-hint';
+    hint.textContent = 'Drag to compare';
+    wrap.appendChild(hint);
+    shots.appendChild(wrap);
+    initSlider(slider);
+  }
+
   piece.images.forEach((src, i) => {
     const img = document.createElement('img');
     img.src = src;

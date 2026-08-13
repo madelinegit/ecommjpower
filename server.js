@@ -54,7 +54,9 @@ async function loadGallery() {
       gallery.listByCategory('art'),
       gallery.listByCategory('home')
     ]);
-    const withPhotos = list => list.filter(i => i.images.length);
+    // A home project can be nothing but a before/after pair, so "has
+    // something to show" is a cover image, not specifically a gallery photo.
+    const withPhotos = list => list.filter(i => i.cover);
     const art2 = withPhotos(art);
     const home2 = withPhotos(home);
     return {
@@ -84,6 +86,8 @@ app.get('/', async (req, res, next) => {
         price: i.price,
         category: i.category,
         images: i.images.map(im => im.url),
+        before: i.before ? i.before.url : null,
+        after: i.after ? i.after.url : null,
         sms: render.smsLink(i),
         href: `/piece/${i.id}/${render.slug(i.title)}`
       };

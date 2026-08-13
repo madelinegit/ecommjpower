@@ -43,6 +43,30 @@
   </nav>
 
   <article class="piece-wrap">
+    <% if (piece.before && piece.after) { %>
+    <div class="piece-ba">
+      <div class="ba-slider">
+        <div class="ba-before">
+          <img class="ba-img" src="<%= piece.before.url %>" alt="<%= piece.title %> before" />
+          <span class="ba-tag ba-tag--before">Before</span>
+        </div>
+        <div class="ba-after">
+          <img class="ba-img" src="<%= piece.after.url %>" alt="<%= piece.title %> after" />
+          <span class="ba-tag ba-tag--after">After</span>
+        </div>
+        <div class="ba-handle">
+          <div class="ba-handle-line"></div>
+          <div class="ba-handle-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="ba-handle-line"></div>
+        </div>
+      </div>
+      <p class="detail-ba-hint">Drag to compare</p>
+    </div>
+    <% } %>
+
     <% if (piece.images.length) { %>
     <div class="piece-shots">
       <% piece.images.forEach(function (img, i) { %>
@@ -97,5 +121,7 @@
     </a>
   </div>
 
+  <script>window.__PIECES__ = {};</script>
+  <script src="/app.js"></script>
 </body>
 </html>

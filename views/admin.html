@@ -141,6 +141,30 @@
     .addphoto { position: relative; overflow: hidden; }
     .addphoto input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
+    /* Before & after pair — only shown on Home Projects */
+    .ba-admin {
+      margin-top: 14px; padding: 12px;
+      border: 1.5px dashed var(--border); border-radius: 10px;
+    }
+    .ba-admin-title { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
+    .ba-slots { display: flex; gap: 12px; }
+    .ba-slot { flex: 1; text-align: center; }
+    .ba-slot-label {
+      display: block; font-size: 0.7rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 6px;
+    }
+    .ba-slot .shot { flex: none; display: inline-block; }
+    .ba-add {
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      width: 100%; min-height: 92px; border-radius: 8px;
+      border: 1.5px solid var(--border); background: var(--bg);
+      color: var(--muted); font-size: 0.9rem; cursor: pointer;
+    }
+    .ba-add input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .ba-live { display: block; margin-top: 10px; font-size: 0.82rem; color: var(--green); }
+    .ba-todo { display: block; margin-top: 10px; font-size: 0.82rem; color: var(--dim); font-style: italic; }
+
     /* New piece sheet */
     .sheet {
       display: none; position: fixed; inset: 0; z-index: 100;
@@ -293,6 +317,19 @@ const AVAIL = [
   { v: 'sold',          label: 'Sold' }
 ];
 
+function baSlot(it, which) {
+  const img = it[which];
+  const label = which === 'before' ? 'Before' : 'After';
+  return '<div class="ba-slot">' +
+    '<span class="ba-slot-label">' + label + '</span>' +
+    (img
+      ? '<div class="shot"><img src="' + esc(img.thumb_url) + '" alt="" />' +
+        '<button data-rmphoto="' + img.id + '" data-item="' + it.id + '">&times;</button></div>'
+      : '<label class="ba-add addphoto">+ Add' +
+        '<input type="file" accept="image/*" data-addphoto="' + it.id + '" data-kind="' + which + '" /></label>') +
+  '</div>';
+}
+
 function availOf(id) {
   const on = document.querySelector('[data-availfor="' + id + '"] button.on');
   return on ? on.dataset.avail : 'available';
@@ -361,6 +398,17 @@ function render() {
         }).join('') +
       '</div>' +
 
+      (category === 'home'
+        ? '<div class="ba-admin">' +
+            '<span class="ba-admin-title">Before &amp; after slider <em class="sub">&mdash; add both to turn it on</em></span>' +
+            '<div class="ba-slots">' +
+              baSlot(it, 'before') + baSlot(it, 'after') +
+            '</div>' +
+            (it.before && it.after
+              ? '<span class="ba-live">&#10003; Slider is live on your site</span>'
+              : '<span class="ba-todo">Add ' + (!it.before && !it.after ? 'both photos' : (!it.before ? 'the before photo' : 'the after photo')) + ' to switch this on</span>') +
+          '</div>'
+        : '') +
       '<div class="row">' +
         '<button class="btn btn-arrow" data-up="' + it.id + '"' + (idx === 0 ? ' disabled' : '') + '>&uarr;</button>' +
         '<button class="btn btn-arrow" data-down="' + it.id + '"' + (idx === mine.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
@@ -480,6 +528,7 @@ function wire() {
     try {
       const fd = new FormData();
       files.forEach(f => fd.append('photos', f));
+      fd.append('kind', inp.dataset.kind || 'photo');
       res = await api('/api/admin/gallery/' + inp.dataset.addphoto + '/photos', { method: 'POST', body: fd });
       d = await res.json().catch(() => ({}));
     } catch (err) {

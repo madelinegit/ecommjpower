@@ -324,17 +324,15 @@
       <p class="section-sub">Tap any job to see it up close.</p>
       <div class="tile-grid">
         <% items.home.forEach(function (it) { %>
-        <a class="tile<%= it.featured ? ' tile--hero' : '' %><%= it.availability === 'sold' ? ' tile--sold' : '' %>"
+        <a class="tile<%= it.featured ? ' tile--hero' : '' %>"
            href="/piece/<%= it.id %>/<%= slug(it.title) %>" data-piece="<%= it.id %>">
           <span class="tile-frame">
-            <img src="<%= it.images[0].thumb_url %>" alt="<%= it.title %>" loading="lazy" decoding="async" />
-            <% if (it.availability === 'sold') { %><span class="chip chip--sold">Sold</span>
-            <% } else if (it.availability === 'made_to_order') { %><span class="chip chip--order">Made to order</span>
-            <% } %>
+            <img src="<%= (it.cover || {}).thumb_url %>" alt="<%= it.title %>" loading="lazy" decoding="async" />
+            <% if (it.hasSlider) { %><span class="chip chip--ba">Before &amp; after</span><% } %>
           </span>
           <span class="tile-cap">
             <span class="tile-title"><%= it.title %></span>
-            <span class="tile-price"><%= it.price ? it.price : 'Ask' %></span>
+            <span class="tile-price"><%= it.price ? it.price : 'Get a quote' %></span>
           </span>
         </a>
         <% }); %>

@@ -407,6 +407,7 @@ body { padding-bottom: 74px; }
   pointer-events: none;
 }
 .chip--sold  { background: rgba(12,7,2,0.88); color: var(--wood-light); border: 1px solid var(--wood-mid); }
+.chip--ba    { background: rgba(12,7,2,0.85); color: var(--accent-bright); border: 1px solid var(--accent); }
 .chip--order { background: var(--accent); color: var(--wood-dark); }
 
 .tile-frame {
@@ -1021,3 +1022,17 @@ body { padding-bottom: 74px; }
   .services-grid { grid-template-columns: repeat(4, 1fr); }
   .tile-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
 }
+
+
+/* ===== BEFORE & AFTER INSIDE A PIECE ===== */
+.detail-ba, .piece-ba { margin-bottom: 14px; }
+.detail-ba-hint {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+.detail-ba .ba-slider, .piece-ba .ba-slider { aspect-ratio: 4/3; }
+.detail-ba .ba-after .ba-img, .piece-ba .ba-after .ba-img { width: 100%; max-width: none; }

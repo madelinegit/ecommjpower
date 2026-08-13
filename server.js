@@ -3,11 +3,11 @@ const multer = require('multer');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 
-const db = require('./db');
-const auth = require('./auth');
-const storage = require('./storage');
-const gallery = require('./gallery');
-const render = require('./render');
+const db = require('./lib/db');
+const auth = require('./lib/auth');
+const storage = require('./lib/storage');
+const gallery = require('./lib/gallery');
+const render = require('./lib/render');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -138,7 +138,7 @@ if (!storage.r2Configured) {
   // Photos uploaded before the move to /media.
   app.use('/local-uploads', express.static(storage.uploadsDir, { maxAge: '365d' }));
 }
-app.use(express.static(path.join(__dirname), {
+app.use(express.static(path.join(__dirname, 'public'), {
   index: false,   // '/' is rendered above, never served as a flat file
   setHeaders(res, filePath) {
     if (/\.(png|jpe?g|svg|webp)$/i.test(filePath)) {

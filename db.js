@@ -74,10 +74,25 @@ const MIGRATIONS = [
      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
    )`,
 
+  `ALTER TABLE gallery_images ADD COLUMN IF NOT EXISTS content_hash TEXT`
+];
+
+// Indexes are applied separately: a unique index can legitimately fail on
+// pre-existing duplicate rows, and that must not abort the whole migration
+// and take the site down to fallback content.
+const INDEXES = [
   // Hard guarantee: a category can never hold two featured items, whatever
   // the application layer does.
   `CREATE UNIQUE INDEX IF NOT EXISTS one_featured_per_category
      ON gallery_items (category) WHERE featured`,
+
+  // Blocks the same name twice in the same view, case- and space-insensitive.
+  `CREATE UNIQUE INDEX IF NOT EXISTS gallery_items_unique_title
+     ON gallery_items (category, lower(btrim(title)))`,
+
+  // Stops the identical photo being attached to a piece twice.
+  `CREATE UNIQUE INDEX IF NOT EXISTS gallery_images_unique_content
+     ON gallery_images (item_id, content_hash) WHERE content_hash IS NOT NULL`,
 
   `CREATE INDEX IF NOT EXISTS gallery_items_order
      ON gallery_items (category, position, id)`,
@@ -94,13 +109,22 @@ async function init() {
   try {
     for (const sql of MIGRATIONS) await pool.query(sql);
     ready = true;
-    console.log('[db] connected, schema up to date');
-    return true;
   } catch (err) {
     ready = false;
     console.error('[db] init failed, serving fallback content:', err.message);
     return false;
   }
+
+  for (const sql of INDEXES) {
+    try {
+      await pool.query(sql);
+    } catch (err) {
+      console.error('[db] index skipped:', err.message);
+    }
+  }
+
+  console.log('[db] connected, schema up to date');
+  return true;
 }
 
 // Rewrites a category's positions to a clean 1..N. Called after every insert,

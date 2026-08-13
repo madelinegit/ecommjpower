@@ -4,8 +4,10 @@
 // needed to make them web-ready happens here so the admin never has to rename,
 // rotate, resize, or convert anything by hand.
 //
-// Files go to Cloudflare R2, never to the container filesystem — a Railway
-// redeploy wipes the container, and uploads must survive that.
+// Files are written to a Railway Volume — disk that survives a redeploy. The
+// container's own filesystem is wiped on every deploy, so uploads must never
+// live there. Cloudflare R2 is still supported if the R2_* variables are set,
+// but it is optional: a Volume needs no second account and no card on file.
 
 const crypto = require('crypto');
 const path = require('path');
@@ -29,16 +31,6 @@ const r2Configured = Boolean(
   R2.accountId && R2.accessKey && R2.secretKey && R2.bucket && R2.publicUrl
 );
 
-// Fail loudly in production rather than silently writing to a disk that is
-// about to be destroyed.
-if (!r2Configured && process.env.NODE_ENV === 'production') {
-  console.error(
-    '[storage] R2 is not configured. Uploads will be written to the container ' +
-    'filesystem and WILL BE LOST on the next deploy. Set R2_ACCOUNT_ID, ' +
-    'R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, and R2_PUBLIC_URL.'
-  );
-}
-
 const s3 = r2Configured
   ? new S3Client({
       region: 'auto',
@@ -47,9 +39,35 @@ const s3 = r2Configured
     })
   : null;
 
-// Local dev fallback so the admin panel is usable without a Cloudflare account.
-const localDir = path.join(__dirname, '.local-uploads');
-if (!r2Configured && !fs.existsSync(localDir)) fs.mkdirSync(localDir, { recursive: true });
+// UPLOADS_DIR is the Volume's mount path in production (e.g. /data). Without
+// it we fall back to a gitignored folder, which is fine for local development.
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, '.local-uploads');
+const usingVolume = Boolean(process.env.UPLOADS_DIR);
+
+if (!r2Configured) {
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  } catch (err) {
+    console.error('[storage] could not create', uploadsDir, '-', err.message);
+  }
+}
+
+// Say plainly which of the three situations we are in, because the difference
+// between "persistent" and "gone on next deploy" is invisible until it bites.
+if (r2Configured) {
+  console.log('[storage] using Cloudflare R2 bucket', R2.bucket);
+} else if (usingVolume) {
+  console.log('[storage] using Railway Volume at', uploadsDir);
+} else if (process.env.NODE_ENV === 'production') {
+  console.error(
+    '[storage] No persistent storage configured. Uploads are being written to ' +
+    'the container filesystem and WILL BE LOST on the next deploy. Attach a ' +
+    'Railway Volume and set UPLOADS_DIR to its mount path.'
+  );
+}
+
+// Kept for the dev static route in server.js.
+const localDir = uploadsDir;
 
 // ── Format detection ──────────────────────────────────────────────────
 // iOS sometimes hands over a HEIC file named .jpg, so sniff the container
@@ -137,9 +155,11 @@ async function putObject(key, body) {
     }));
     return `${R2.publicUrl}/${key}`;
   }
-  const dest = path.join(localDir, key.replace(/\//g, '__'));
-  await fs.promises.writeFile(dest, body);
-  return `/local-uploads/${path.basename(dest)}`;
+  // Flatten the key so the volume stays a single directory — no nested
+  // mkdir on every write, and the filename alone is enough to find the file.
+  const name = key.replace(/\//g, '__');
+  await fs.promises.writeFile(path.join(uploadsDir, name), body);
+  return `/media/${name}`;
 }
 
 async function deleteObject(key) {
@@ -148,7 +168,7 @@ async function deleteObject(key) {
     if (s3) {
       await s3.send(new DeleteObjectCommand({ Bucket: R2.bucket, Key: key }));
     } else {
-      await fs.promises.unlink(path.join(localDir, key.replace(/\//g, '__'))).catch(() => {});
+      await fs.promises.unlink(path.join(uploadsDir, key.replace(/\//g, '__'))).catch(() => {});
     }
   } catch (err) {
     // A stranded object costs pennies; a failed delete must not block the admin.
@@ -179,6 +199,8 @@ module.exports = {
   isHeic,
   UploadError,
   r2Configured,
+  usingVolume,
+  uploadsDir,
   localDir,
   MAX_UPLOAD_BYTES
 };

@@ -128,8 +128,15 @@ app.get('/piece/:id/:slug?', async (req, res, next) => {
 });
 
 // ── Static ─────────────────────────────────────────────────────────────
+// Uploaded photos, served off the Railway Volume when R2 is not in use.
 if (!storage.r2Configured) {
-  app.use('/local-uploads', express.static(storage.localDir));
+  app.use('/media', express.static(storage.uploadsDir, {
+    maxAge: '365d',
+    immutable: true,
+    fallthrough: true
+  }));
+  // Photos uploaded before the move to /media.
+  app.use('/local-uploads', express.static(storage.uploadsDir, { maxAge: '365d' }));
 }
 app.use(express.static(path.join(__dirname), {
   index: false,   // '/' is rendered above, never served as a flat file

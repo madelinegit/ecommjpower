@@ -12,202 +12,514 @@
       --bg: #1a1208; --card: #221a0e; --border: #3a2a14;
       --text: #f0e8d8; --muted: #a89070; --dim: #7a6040;
       --accent: #c8a96e; --gold: #e4c580;
-      --green: #4e8f57; --red: #9e3a3a;
+      --green: #4e8f57; --red: #a34242;
     }
     body {
       background: var(--bg); color: var(--text);
       font-family: 'Georgia', 'Times New Roman', serif;
-      min-height: 100dvh; padding-bottom: 40px;
+      min-height: 100dvh; padding-bottom: 60px;
       -webkit-text-size-adjust: 100%;
     }
 
-    /* Header */
     .top {
       position: sticky; top: 0; z-index: 50;
       background: var(--card); border-bottom: 1px solid var(--border);
-      padding: 12px 16px calc(12px + env(safe-area-inset-top));
-      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; display: flex; align-items: center; gap: 11px;
     }
-    .top img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); }
+    .top img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); }
     .top h1 { font-size: 1.05rem; color: var(--gold); line-height: 1.2; }
-    .top .who { font-size: 0.72rem; color: var(--dim); display: block; }
     .top .spacer { flex: 1; }
     .signout {
       background: none; border: 1px solid var(--border); color: var(--muted);
-      border-radius: 8px; padding: 10px 14px; font-family: inherit;
-      font-size: 0.85rem; cursor: pointer; min-height: 44px;
+      border-radius: 8px; padding: 0 14px; min-height: 44px;
+      font-family: inherit; font-size: 0.85rem; cursor: pointer;
     }
-    .signout:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* Section nav */
-    .secnav { display: flex; gap: 8px; padding: 12px 16px 0; overflow-x: auto; }
+    .secnav { display: flex; gap: 7px; padding: 11px 14px 0; }
     .secnav button {
-      flex: 1 0 auto; min-height: 46px; padding: 0 18px;
+      flex: 1; min-height: 46px; padding: 0 10px;
       background: var(--card); border: 1.5px solid var(--border); border-radius: 9px;
       color: var(--muted); font-family: inherit; font-size: 0.95rem; cursor: pointer;
-      white-space: nowrap; transition: all 0.18s;
+      transition: all 0.18s;
     }
     .secnav button.on { background: var(--accent); border-color: var(--gold); color: #1a1208; font-weight: 700; }
 
-    .wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
-    .panel { display: none; }
-    .panel.on { display: block; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 14px; }
+    .panel { display: none; } .panel.on { display: block; }
+    .note { color: var(--dim); text-align: center; padding: 34px 12px; font-size: 0.95rem; line-height: 1.6; }
 
-    .note { color: var(--dim); text-align: center; padding: 40px 12px; font-size: 0.95rem; line-height: 1.6; }
+    /* Category switch */
+    .catrow { display: flex; gap: 7px; margin-bottom: 14px; }
+    .catrow button {
+      flex: 1; min-height: 44px; border-radius: 8px; cursor: pointer;
+      background: transparent; border: 1.5px solid var(--border);
+      color: var(--muted); font-family: inherit; font-size: 0.9rem;
+    }
+    .catrow button.on { border-color: var(--accent); color: var(--gold); background: rgba(200,169,110,0.1); }
+
+    .addbtn {
+      width: 100%; min-height: 54px; margin-bottom: 16px;
+      background: var(--accent); color: #1a1208; border: none; border-radius: 10px;
+      font-family: inherit; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+    }
 
     .card {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: 11px; padding: 18px; margin-bottom: 16px;
+      border-radius: 11px; padding: 15px; margin-bottom: 14px;
     }
-    .card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-    .who-said { color: var(--gold); font-weight: 700; }
-    .when { color: var(--dim); font-size: 0.78rem; }
+    .card.isfeatured { border-color: var(--accent); }
 
-    label.fieldlabel { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 5px; letter-spacing: 0.03em; }
-    textarea, input[type="text"] {
+    .flag {
+      display: inline-block; background: var(--accent); color: #1a1208;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.09em;
+      text-transform: uppercase; padding: 3px 9px; border-radius: 3px; margin-bottom: 9px;
+    }
+
+    .shots { display: flex; gap: 7px; overflow-x: auto; margin-bottom: 11px; padding-bottom: 3px; }
+    .shot { position: relative; flex: 0 0 92px; }
+    .shot img { width: 92px; height: 92px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); display: block; }
+    .shot button {
+      position: absolute; top: -6px; right: -6px; width: 26px; height: 26px;
+      border-radius: 50%; background: var(--red); color: #fff; border: 2px solid var(--card);
+      font-size: 0.95rem; line-height: 1; cursor: pointer; font-family: inherit;
+    }
+    .nophoto { color: var(--dim); font-size: 0.86rem; margin-bottom: 11px; font-style: italic; }
+
+    label.fl { display: block; font-size: 0.8rem; color: var(--muted); margin: 9px 0 5px; letter-spacing: 0.03em; }
+    input[type="text"], textarea {
       width: 100%; background: var(--bg); border: 1.5px solid var(--border);
       border-radius: 8px; color: var(--text); font-family: inherit;
-      font-size: 1rem; padding: 12px; outline: none; resize: vertical;
+      font-size: 1rem; padding: 12px; outline: none; min-height: 48px; resize: vertical;
     }
-    textarea:focus, input:focus { border-color: var(--accent); }
-    textarea { min-height: 96px; }
+    input:focus, textarea:focus { border-color: var(--accent); }
+    textarea { min-height: 84px; }
 
-    .card img.photo { margin-top: 12px; width: 100%; max-height: 260px; object-fit: cover; border-radius: 9px; border: 1px solid var(--border); }
-
-    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; align-items: center; }
     .btn {
-      min-height: 44px; padding: 0 18px; border-radius: 8px; border: none;
-      font-family: inherit; font-size: 0.92rem; font-weight: 700; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 44px; padding: 0 16px; border-radius: 8px; border: none;
+      font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     }
     .btn-save { background: var(--accent); color: #1a1208; }
-    .btn-ok   { background: var(--green); color: #fff; }
-    .btn-del  { background: transparent; border: 1.5px solid var(--red); color: #d98080; }
-    .saved { color: var(--green); font-size: 0.85rem; align-self: center; display: none; }
+    .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+    .btn-del { background: transparent; border: 1.5px solid var(--red); color: #d98080; }
+    .btn-arrow { background: transparent; border: 1.5px solid var(--border); color: var(--gold); min-width: 52px; font-size: 1.2rem; }
+    .btn:disabled { opacity: 0.5; cursor: default; }
+    .ok { color: var(--green); font-size: 0.85rem; display: none; }
+
+    .addphoto { position: relative; overflow: hidden; }
+    .addphoto input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+    /* New piece sheet */
+    .sheet {
+      display: none; position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.82); align-items: flex-end; justify-content: center;
+    }
+    .sheet.on { display: flex; }
+    .sheet-in {
+      background: var(--card); width: 100%; max-width: 640px;
+      border-radius: 16px 16px 0 0; padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+      max-height: 92dvh; overflow-y: auto;
+    }
+    .sheet h2 { font-size: 1.2rem; color: var(--gold); margin-bottom: 4px; }
+    .sheet .hint { color: var(--dim); font-size: 0.85rem; margin-bottom: 14px; }
+
+    .pickphoto {
+      display: block; position: relative; overflow: hidden; text-align: center;
+      border: 2px dashed var(--border); border-radius: 11px; padding: 26px 14px;
+      color: var(--muted); cursor: pointer; margin-bottom: 6px;
+    }
+    .pickphoto input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .picked { color: var(--gold); font-size: 0.88rem; margin-bottom: 10px; min-height: 20px; }
+
+    .bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; display: none; margin: 12px 0 4px; }
+    .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s; }
+    .barlabel { font-size: 0.85rem; color: var(--muted); display: none; text-align: center; margin-bottom: 6px; }
+
+    .err {
+      display: none; background: rgba(163,66,66,0.15); border: 1px solid var(--red);
+      color: #eba0a0; border-radius: 8px; padding: 12px; font-size: 0.9rem;
+      line-height: 1.5; margin-top: 12px;
+    }
   </style>
 </head>
 <body>
 
   <header class="top">
     <img src="/logo.png" alt="" />
-    <div>
-      <h1>Your Website</h1>
-      <span class="who" id="who"></span>
-    </div>
+    <h1>Your Website</h1>
     <div class="spacer"></div>
     <button class="signout" id="signout">Sign Out</button>
   </header>
 
   <nav class="secnav">
-    <button class="on" data-panel="reviews">Reviews</button>
-    <button data-panel="soon">Photos &amp; Text</button>
+    <button class="on" data-panel="pieces">Photos</button>
+    <button data-panel="reviews">Reviews</button>
   </nav>
 
   <div class="wrap">
-    <section class="panel on" id="panel-reviews">
-      <div id="reviews"><p class="note">Loading…</p></div>
+
+    <!-- PIECES -->
+    <section class="panel on" id="panel-pieces">
+      <div class="catrow">
+        <button class="on" data-cat="art">Art Gallery</button>
+        <button data-cat="home">Home Projects</button>
+      </div>
+      <button class="addbtn" id="add">+ Add a piece</button>
+      <div id="pieces"><p class="note">Loading…</p></div>
     </section>
 
-    <section class="panel" id="panel-soon">
-      <p class="note">
-        Adding pieces and editing your website text is coming next.<br />
-        Nothing you do here will be lost.
-      </p>
+    <!-- REVIEWS -->
+    <section class="panel" id="panel-reviews">
+      <div id="reviews"><p class="note">Loading…</p></div>
     </section>
   </div>
 
-  <script>
-    document.querySelectorAll('.secnav button').forEach(b => {
-      b.addEventListener('click', () => {
-        document.querySelectorAll('.secnav button').forEach(x => x.classList.remove('on'));
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
-        b.classList.add('on');
-        document.getElementById('panel-' + b.dataset.panel).classList.add('on');
+  <!-- NEW PIECE -->
+  <div class="sheet" id="sheet">
+    <div class="sheet-in">
+      <h2>Add a piece</h2>
+      <p class="hint">A photo and a name is all you need.</p>
+
+      <label class="pickphoto">
+        <span id="pickLabel">Tap to take or choose a photo</span>
+        <input type="file" id="newPhotos" accept="image/*" multiple />
+      </label>
+      <p class="picked" id="picked"></p>
+
+      <label class="fl" for="newTitle">Name</label>
+      <input type="text" id="newTitle" placeholder="Stained glass lantern" />
+
+      <label class="fl" for="newDesc">About it (optional)</label>
+      <textarea id="newDesc" placeholder="Walnut frame, hand cut glass…"></textarea>
+
+      <label class="fl" for="newPrice">Price (optional)</label>
+      <input type="text" id="newPrice" placeholder="$250 or From $180" />
+
+      <label class="fl">Where does it go?</label>
+      <div class="catrow" id="newCat">
+        <button type="button" class="on" data-cat="art">Art Gallery</button>
+        <button type="button" data-cat="home">Home Projects</button>
+      </div>
+
+      <div class="bar" id="bar"><i id="barFill"></i></div>
+      <p class="barlabel" id="barLabel">Uploading…</p>
+      <p class="err" id="err"></p>
+
+      <div class="row">
+        <button class="btn btn-save" id="save" style="flex:1">Save</button>
+        <button class="btn btn-ghost" id="cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ── helpers ───────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const esc = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+async function api(url, opts) {
+  const res = await fetch(url, Object.assign({ credentials: 'same-origin' }, opts));
+  if (res.status === 401) { location.href = '/admin/login'; throw new Error('signed out'); }
+  return res;
+}
+
+document.querySelectorAll('.secnav button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.secnav button').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  b.classList.add('on');
+  $('panel-' + b.dataset.panel).classList.add('on');
+}));
+
+$('signout').addEventListener('click', async () => {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  location.href = '/admin/login';
+});
+
+// ── pieces ────────────────────────────────────────────────────────────
+let category = 'art';
+let items = [];
+
+document.querySelectorAll('.catrow [data-cat]').forEach(b => {
+  if (b.closest('#newCat')) return;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.catrow:not(#newCat) [data-cat]').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    category = b.dataset.cat;
+    render();
+  });
+});
+
+async function loadPieces() {
+  try {
+    const res = await api('/api/admin/gallery');
+    if (!res.ok) throw new Error();
+    items = await res.json();
+    render();
+  } catch (e) {
+    if (e.message !== 'signed out') {
+      $('pieces').innerHTML = '<p class="note">Could not load your photos right now.</p>';
+    }
+  }
+}
+
+function render() {
+  const box = $('pieces');
+  const mine = items.filter(i => i.category === category);
+  if (!mine.length) {
+    box.innerHTML = '<p class="note">Nothing here yet.<br />Tap “Add a piece” to put your first photo up.</p>';
+    return;
+  }
+  box.innerHTML = '';
+  mine.forEach((it, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (it.featured ? ' isfeatured' : '');
+    card.innerHTML =
+      (it.featured ? '<span class="flag">Showing at the top</span>' : '') +
+      (it.images.length
+        ? '<div class="shots">' + it.images.map(im =>
+            '<div class="shot"><img src="' + esc(im.thumb_url) + '" alt="" />' +
+            '<button data-rmphoto="' + im.id + '" data-item="' + it.id + '">&times;</button></div>').join('') +
+          '</div>'
+        : '<p class="nophoto">No photo yet — add one so it shows on your site.</p>') +
+
+      '<label class="fl">Name</label>' +
+      '<input type="text" id="t' + it.id + '" value="' + esc(it.title) + '" />' +
+      '<label class="fl">About it</label>' +
+      '<textarea id="d' + it.id + '">' + esc(it.description || '') + '</textarea>' +
+      '<label class="fl">Price</label>' +
+      '<input type="text" id="p' + it.id + '" value="' + esc(it.price || '') + '" />' +
+
+      '<div class="row">' +
+        '<button class="btn btn-arrow" data-up="' + it.id + '"' + (idx === 0 ? ' disabled' : '') + '>&uarr;</button>' +
+        '<button class="btn btn-arrow" data-down="' + it.id + '"' + (idx === mine.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
+        '<label class="btn btn-ghost addphoto">Add photo' +
+          '<input type="file" accept="image/*" multiple data-addphoto="' + it.id + '" /></label>' +
+      '</div>' +
+      '<div class="row">' +
+        '<button class="btn btn-save" data-save="' + it.id + '">Save</button>' +
+        (it.featured ? '' : '<button class="btn btn-ghost" data-feat="' + it.id + '">Show at top</button>') +
+        '<button class="btn btn-del" data-del="' + it.id + '">Delete</button>' +
+        '<span class="ok" id="ok' + it.id + '">Saved</span>' +
+      '</div>';
+    box.appendChild(card);
+  });
+  wire();
+}
+
+function wire() {
+  const box = $('pieces');
+
+  box.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', async () => {
+    const id = b.dataset.save;
+    b.disabled = true;
+    const res = await api('/api/admin/gallery/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: $('t' + id).value,
+        description: $('d' + id).value,
+        price: $('p' + id).value,
+        category
+      })
+    });
+    b.disabled = false;
+    if (!res.ok) { const d = await res.json().catch(() => ({})); alert(d.error || 'Could not save that.'); return; }
+    const ok = $('ok' + id);
+    ok.style.display = 'inline'; setTimeout(() => ok.style.display = 'none', 2000);
+    await loadPieces();
+  }));
+
+  box.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', async () => {
+    await api('/api/admin/gallery/' + b.dataset.up + '/move', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ direction: 'up' })
+    });
+    loadPieces();
+  }));
+
+  box.querySelectorAll('[data-down]').forEach(b => b.addEventListener('click', async () => {
+    await api('/api/admin/gallery/' + b.dataset.down + '/move', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ direction: 'down' })
+    });
+    loadPieces();
+  }));
+
+  box.querySelectorAll('[data-feat]').forEach(b => b.addEventListener('click', async () => {
+    await api('/api/admin/gallery/' + b.dataset.feat + '/feature', { method: 'POST' });
+    loadPieces();
+  }));
+
+  box.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
+    if (!confirm('Delete this for good? This cannot be undone.')) return;
+    await api('/api/admin/gallery/' + b.dataset.del, { method: 'DELETE' });
+    loadPieces();
+  }));
+
+  box.querySelectorAll('[data-rmphoto]').forEach(b => b.addEventListener('click', async () => {
+    if (!confirm('Remove this photo?')) return;
+    await api('/api/admin/gallery/' + b.dataset.item + '/photos/' + b.dataset.rmphoto, { method: 'DELETE' });
+    loadPieces();
+  }));
+
+  box.querySelectorAll('[data-addphoto]').forEach(inp => inp.addEventListener('change', async e => {
+    const files = [...e.target.files];
+    if (!files.length) return;
+    const label = inp.closest('label');
+    label.firstChild.textContent = 'Uploading…';
+    const fd = new FormData();
+    files.forEach(f => fd.append('photos', f));
+    const res = await api('/api/admin/gallery/' + inp.dataset.addphoto + '/photos', { method: 'POST', body: fd });
+    if (!res.ok) { const d = await res.json().catch(() => ({})); alert(d.error || 'That photo would not upload.'); }
+    loadPieces();
+  }));
+}
+
+// ── new piece sheet ───────────────────────────────────────────────────
+let newCategory = 'art';
+
+document.querySelectorAll('#newCat [data-cat]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#newCat [data-cat]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  newCategory = b.dataset.cat;
+}));
+
+$('add').addEventListener('click', () => {
+  newCategory = category;
+  document.querySelectorAll('#newCat [data-cat]').forEach(x => x.classList.toggle('on', x.dataset.cat === category));
+  $('newTitle').value = ''; $('newDesc').value = ''; $('newPrice').value = '';
+  $('newPhotos').value = ''; $('picked').textContent = '';
+  $('err').style.display = 'none';
+  $('sheet').classList.add('on');
+});
+
+$('cancel').addEventListener('click', () => $('sheet').classList.remove('on'));
+
+$('newPhotos').addEventListener('change', e => {
+  const n = e.target.files.length;
+  $('picked').textContent = n ? (n === 1 ? '1 photo ready' : n + ' photos ready') : '';
+});
+
+$('save').addEventListener('click', () => {
+  const title = $('newTitle').value.trim();
+  const err = $('err');
+  err.style.display = 'none';
+
+  if (!title) {
+    err.textContent = 'Please give this a name first.';
+    err.style.display = 'block';
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append('title', title);
+  fd.append('description', $('newDesc').value);
+  fd.append('price', $('newPrice').value);
+  fd.append('category', newCategory);
+  [...$('newPhotos').files].forEach(f => fd.append('photos', f));
+
+  // XHR rather than fetch, because it reports real upload progress —
+  // which matters a lot on a phone with one bar of signal.
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/admin/gallery');
+  xhr.withCredentials = true;
+
+  $('save').disabled = true;
+  $('bar').style.display = 'block';
+  $('barLabel').style.display = 'block';
+  $('barLabel').textContent = 'Uploading…';
+
+  xhr.upload.onprogress = ev => {
+    if (!ev.lengthComputable) return;
+    const pct = Math.round((ev.loaded / ev.total) * 100);
+    $('barFill').style.width = pct + '%';
+    $('barLabel').textContent = pct < 100 ? 'Uploading… ' + pct + '%' : 'Almost done…';
+  };
+
+  xhr.onload = () => {
+    $('save').disabled = false;
+    $('bar').style.display = 'none';
+    $('barLabel').style.display = 'none';
+    $('barFill').style.width = '0';
+
+    if (xhr.status === 401) { location.href = '/admin/login'; return; }
+
+    let data = {};
+    try { data = JSON.parse(xhr.responseText); } catch {}
+
+    if (xhr.status >= 400) {
+      err.textContent = data.error || 'That did not save. Please try again.';
+      err.style.display = 'block';
+      return;
+    }
+    if (data.warnings && data.warnings.length) alert(data.warnings[0]);
+
+    $('sheet').classList.remove('on');
+    category = newCategory;
+    document.querySelectorAll('.catrow:not(#newCat) [data-cat]')
+      .forEach(x => x.classList.toggle('on', x.dataset.cat === category));
+    loadPieces();
+  };
+
+  xhr.onerror = () => {
+    $('save').disabled = false;
+    $('bar').style.display = 'none';
+    $('barLabel').style.display = 'none';
+    err.textContent = 'The upload stopped. Check your signal and tap Save again — nothing was lost.';
+    err.style.display = 'block';
+  };
+
+  xhr.send(fd);
+});
+
+// ── reviews ───────────────────────────────────────────────────────────
+async function loadReviews() {
+  const box = $('reviews');
+  try {
+    const res = await api('/api/admin/reviews');
+    const list = await res.json();
+    if (!Array.isArray(list) || !list.length) { box.innerHTML = '<p class="note">No reviews yet.</p>'; return; }
+    box.innerHTML = '';
+    list.forEach(r => {
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.innerHTML =
+        '<label class="fl">' + esc(r.name) + ' · ' +
+          (r.status === 'approved' ? 'Showing on site' : 'Waiting for you') + '</label>' +
+        '<textarea id="rt' + r.id + '">' + esc(r.text) + '</textarea>' +
+        (r.image_url ? '<div class="shots"><div class="shot"><img src="' + esc(r.image_url) + '" alt="" /></div></div>' : '') +
+        '<div class="row">' +
+          '<button class="btn btn-save" data-rsave="' + r.id + '">Save</button>' +
+          (r.status !== 'approved' ? '<button class="btn btn-ghost" data-rok="' + r.id + '">Show on site</button>' : '') +
+          '<button class="btn btn-del" data-rdel="' + r.id + '">Delete</button>' +
+        '</div>';
+      box.appendChild(c);
+    });
+
+    box.querySelectorAll('[data-rsave]').forEach(b => b.addEventListener('click', async () => {
+      await api('/api/admin/reviews/' + b.dataset.rsave, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: $('rt' + b.dataset.rsave).value })
       });
-    });
+      b.textContent = 'Saved'; setTimeout(() => b.textContent = 'Save', 1800);
+    }));
+    box.querySelectorAll('[data-rok]').forEach(b => b.addEventListener('click', async () => {
+      await api('/api/admin/reviews/' + b.dataset.rok + '/approve', { method: 'PATCH' });
+      loadReviews();
+    }));
+    box.querySelectorAll('[data-rdel]').forEach(b => b.addEventListener('click', async () => {
+      if (!confirm('Delete this review for good?')) return;
+      await api('/api/admin/reviews/' + b.dataset.rdel, { method: 'DELETE' });
+      loadReviews();
+    }));
+  } catch (e) {
+    if (e.message !== 'signed out') box.innerHTML = '<p class="note">Could not load reviews right now.</p>';
+  }
+}
 
-    document.getElementById('signout').addEventListener('click', async () => {
-      await fetch('/api/admin/logout', { method: 'POST' });
-      window.location.href = '/admin/login';
-    });
-
-    function esc(s) {
-      return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-    function when(ts) {
-      if (!ts) return '';
-      return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    async function api(url, opts) {
-      const res = await fetch(url, Object.assign({ credentials: 'same-origin' }, opts));
-      if (res.status === 401) { window.location.href = '/admin/login'; throw new Error('signed out'); }
-      return res;
-    }
-
-    async function loadReviews() {
-      const box = document.getElementById('reviews');
-      try {
-        const res = await api('/api/admin/reviews');
-        const list = await res.json();
-        document.getElementById('who').textContent = '';
-
-        if (!Array.isArray(list) || !list.length) {
-          box.innerHTML = '<p class="note">No reviews yet.</p>';
-          return;
-        }
-        box.innerHTML = '';
-        list.forEach(r => {
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML =
-            '<div class="card-top">' +
-              '<span class="who-said">' + esc(r.name) + '</span>' +
-              '<span class="when">' + when(r.submitted_at) +
-                (r.status === 'approved' ? ' · Showing on site' : ' · Waiting for you') + '</span>' +
-            '</div>' +
-            '<label class="fieldlabel" for="t' + r.id + '">What they wrote</label>' +
-            '<textarea id="t' + r.id + '">' + esc(r.text) + '</textarea>' +
-            (r.image_url ? '<img class="photo" src="' + esc(r.image_url) + '" alt="" />' : '') +
-            '<div class="row">' +
-              '<button class="btn btn-save" data-save="' + r.id + '">Save</button>' +
-              (r.status !== 'approved'
-                ? '<button class="btn btn-ok" data-ok="' + r.id + '">Show on site</button>' : '') +
-              '<button class="btn btn-del" data-del="' + r.id + '">Delete</button>' +
-              '<span class="saved" id="s' + r.id + '">Saved</span>' +
-            '</div>';
-          box.appendChild(card);
-        });
-
-        box.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', async () => {
-          const id = b.dataset.save;
-          await api('/api/admin/reviews/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: document.getElementById('t' + id).value })
-          });
-          const s = document.getElementById('s' + id);
-          s.style.display = 'inline'; setTimeout(() => s.style.display = 'none', 2200);
-        }));
-
-        box.querySelectorAll('[data-ok]').forEach(b => b.addEventListener('click', async () => {
-          await api('/api/admin/reviews/' + b.dataset.ok + '/approve', { method: 'PATCH' });
-          loadReviews();
-        }));
-
-        box.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
-          if (!confirm('Delete this review for good?')) return;
-          await api('/api/admin/reviews/' + b.dataset.del, { method: 'DELETE' });
-          loadReviews();
-        }));
-      } catch (err) {
-        if (err.message !== 'signed out') {
-          box.innerHTML = '<p class="note">Could not load reviews right now. Check back in a minute.</p>';
-        }
-      }
-    }
-
-    loadReviews();
-  </script>
+loadPieces();
+loadReviews();
+</script>
 </body>
 </html>
